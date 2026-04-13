@@ -5973,7 +5973,7 @@ function initHeroJumboInteraction() {
     heroJumbo.style.filter = 'drop-shadow(0 10px 30px rgba(123,47,190,0.4))';
   });
   
-  // Auto-rotate messages every 12 seconds (increased from 8s for stability)
+  // Auto-rotate messages every 15 seconds (increased for better stability)
   function startAutoRotate() {
     if (autoRotateTimer) clearInterval(autoRotateTimer);
     autoRotateTimer = setInterval(() => {
@@ -5984,27 +5984,22 @@ function initHeroJumboInteraction() {
       const randomIndex = Math.floor(Math.random() * messages.length);
       const msg = messages[randomIndex];
       
-      // Update speech bubble with fade animation
+      // Update speech bubble smoothly (no fade out to avoid disappearance)
       const bubble = document.getElementById('heroSpeechBubble');
       if (bubble) {
-        // Fade out
-        bubble.style.opacity = '0';
-        bubble.style.transition = 'opacity 0.3s ease';
-        
-        setTimeout(() => {
-          // Update content
-          bubble.innerHTML = `
-            <div style="font-size:13px;font-weight:700;color:#7B2FBE;margin-bottom:3px;">${msg.greeting}</div>
-            <div style="font-size:11px;color:#1a1a1a;line-height:1.4;">${msg.message}</div>
-            
-            <!-- Arrow pointing down -->
-            <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(255,255,255,0.95);"></div>
-          `;
+        // Direct content update without opacity change
+        bubble.innerHTML = `
+          <div style="font-size:13px;font-weight:700;color:#7B2FBE;margin-bottom:3px;">${msg.greeting}</div>
+          <div style="font-size:11px;color:#1a1a1a;line-height:1.4;">${msg.message}</div>
           
-          // Fade in with pop animation
-          bubble.style.opacity = '1';
-          bubble.style.animation = 'speechBubblePop 0.6s ease-out forwards';
-        }, 300);
+          <!-- Arrow pointing down -->
+          <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(255,255,255,0.95);"></div>
+        `;
+        
+        // Subtle pop animation only (no opacity change)
+        bubble.style.animation = 'none';
+        bubble.offsetHeight; // Trigger reflow
+        bubble.style.animation = 'speechBubblePop 0.4s ease-out';
       }
       
       // Jumbo bounce animation
@@ -6013,7 +6008,7 @@ function initHeroJumboInteraction() {
       setTimeout(() => {
         heroJumbo.style.transform = 'scale(1)';
       }, 300);
-    }, 8000); // Every 8 seconds
+    }, 15000); // Every 15 seconds
   }
   
   function resetAutoRotate() {
