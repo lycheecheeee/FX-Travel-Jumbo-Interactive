@@ -5072,7 +5072,7 @@ function initJumboSound() {
     try {
       // Create audio element if not exists
       if (!audioElement) {
-        audioElement = new Audio('/assets/%23sounds/bottom-sound.wav');
+        audioElement = new Audio('./assets/sounds/bottom-sound.wav');
         audioElement.volume = 0.6; // Set volume to 60%
       }
       
@@ -5464,7 +5464,7 @@ function initHeroJumboInteraction() {
     try {
       // 如果音頻元素不存在，則創建新的
       if (!heroAudioElement) {
-        heroAudioElement = new Audio('/assets/%23sounds/hero-sound.mp3');
+        heroAudioElement = new Audio('./assets/sounds/hero-sound.mp3');
         heroAudioElement.volume = 0.6; // 設定音量為 60%
       }
       
