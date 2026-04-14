@@ -5093,37 +5093,43 @@ function initJumboSound() {
   // Load and play the cartoon cute jump sound
   function playElephantSound() {
     try {
-      logger.log('🔊 CTA Jumbo: Playing elephant sound...');
-      // Create audio element if not exists
-      if (!audioElement) {
-        logger.log('🎵 Creating new audio element for bottom sound');
-        audioElement = new Audio('./assets/sounds/bottom-sound.wav');
-        audioElement.volume = 1.0; // Set volume to 100%
-        
-        // Add error handling
-        audioElement.addEventListener('error', (e) => {
-          logger.error('❌ Bottom sound load error:', e);
-        });
-        
-        audioElement.addEventListener('canplaythrough', () => {
-          logger.log('✅ Bottom sound loaded successfully');
-        });
-      }
+      // Always create a new audio instance for better compatibility
+      const audio = new Audio('./assets/sounds/bottom-sound.wav');
+      audio.volume = 1.0;
+      audio.preload = 'auto';
       
-      // Reset and play
-      audioElement.currentTime = 0;
-      const playPromise = audioElement.play();
+      logger.log('🔊 CTA Jumbo: Playing elephant sound...');
+      
+      // Add error handling
+      audio.addEventListener('error', (e) => {
+        logger.error('❌ Bottom sound load error:', e);
+        logger.error('Error code:', audio.error ? audio.error.code : 'unknown');
+      });
+      
+      audio.addEventListener('canplaythrough', () => {
+        logger.log('✅ Bottom sound ready to play');
+      });
+      
+      // Play with proper error handling
+      const playPromise = audio.play();
       
       if (playPromise !== undefined) {
         playPromise.then(() => {
-          logger.log('✅ Bottom sound playing!');
+          logger.log('✅ Bottom sound playing successfully');
         }).catch(error => {
-          logger.warn('⚠️ Audio playback failed:', error);
-          logger.warn('💡 Tip: User interaction may be required before audio can play');
+          logger.warn('⚠️ Bottom sound playback failed:', error.name, error.message);
+          if (error.name === 'NotAllowedError') {
+            logger.warn('💡 Browser blocked autoplay. Click anywhere on page first.');
+          }
         });
       } else {
         logger.log('✅ Bottom sound playing (legacy browser)!');
       }
+      
+      // Clean up after playback
+      audio.addEventListener('ended', () => {
+        audio.remove();
+      });
       
     } catch (e) {
       logger.log('Audio playback error:', e);
@@ -5504,31 +5510,39 @@ function initHeroJumboInteraction() {
   // ============================================
   function playHeroSound() {
     try {
-      // 如果音頻元素不存在，則創建新的
-      if (!heroAudioElement) {
-        heroAudioElement = new Audio('./assets/sounds/hero-sound.mp3');
-        heroAudioElement.volume = 1.0; // 設定音量為 100%
-        
-        // Add error handling
-        heroAudioElement.addEventListener('error', (e) => {
-          logger.error('❌ Hero sound load error:', e);
-        });
-      }
+      // Always create a new audio instance for better compatibility
+      const audio = new Audio('./assets/sounds/hero-sound.mp3');
+      audio.volume = 1.0;
+      audio.preload = 'auto';
       
-      // 重置並播放 - clone the audio to allow overlapping playback
-      const audioClone = heroAudioElement.cloneNode();
-      audioClone.volume = 1.0;
-      const playPromise = audioClone.play();
+      // Add error handling
+      audio.addEventListener('error', (e) => {
+        logger.error('❌ Hero sound load error:', e);
+        logger.error('Error code:', audio.error ? audio.error.code : 'unknown');
+      });
+      
+      audio.addEventListener('canplaythrough', () => {
+        logger.log('✅ Hero sound ready to play');
+      });
+      
+      // Play with proper error handling
+      const playPromise = audio.play();
       
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          logger.warn('⚠️ 音效播放失敗:', error);
+        playPromise.then(() => {
+          logger.log('✅ Hero sound playing successfully');
+        }).catch(error => {
+          logger.warn('⚠️ Hero sound playback failed:', error.name, error.message);
+          // Fallback: try again with user gesture
+          if (error.name === 'NotAllowedError') {
+            logger.warn('💡 Browser blocked autoplay. Click anywhere on page first.');
+          }
         });
       }
       
-      // Clean up cloned audio after playback
-      audioClone.addEventListener('ended', () => {
-        audioClone.remove();
+      // Clean up after playback
+      audio.addEventListener('ended', () => {
+        audio.remove();
       });
       
       // ===== 震撼視覺特效 =====
