@@ -5095,21 +5095,32 @@ function initJumboSound() {
   // Load and play the cartoon cute jump sound
   function playElephantSound() {
     try {
+      // Use absolute path for GitHub Pages compatibility
+      const audioPath = window.location.hostname.includes('github.io') 
+        ? '/FX-Travel-Jumbo-Interactive/assets/sounds/bottom-sound.wav'
+        : './assets/sounds/bottom-sound.wav';
+      
+      logger.log('🔊 CTA Jumbo: Playing elephant sound from:', audioPath);
+      
       // Always create a new audio instance for better compatibility
-      const audio = new Audio('./assets/sounds/bottom-sound.wav');
+      const audio = new Audio(audioPath);
       audio.volume = 1.0;
       audio.preload = 'auto';
       
-      logger.log('🔊 CTA Jumbo: Playing elephant sound...');
-      
-      // Add error handling
+      // Add detailed error handling
       audio.addEventListener('error', (e) => {
         logger.error('❌ Bottom sound load error:', e);
         logger.error('Error code:', audio.error ? audio.error.code : 'unknown');
+        logger.error('Audio src:', audio.src);
+        logger.error('Audio currentSrc:', audio.currentSrc);
       });
       
       audio.addEventListener('canplaythrough', () => {
         logger.log('✅ Bottom sound ready to play');
+      });
+      
+      audio.addEventListener('loadeddata', () => {
+        logger.log('✅ Bottom sound data loaded');
       });
       
       // Play with proper error handling
@@ -5120,8 +5131,9 @@ function initJumboSound() {
           logger.log('✅ Bottom sound playing successfully');
         }).catch(error => {
           logger.warn('⚠️ Bottom sound playback failed:', error.name, error.message);
+          logger.warn('Error details:', error);
           if (error.name === 'NotAllowedError') {
-            logger.warn('💡 Browser blocked autoplay. Click anywhere on page first.');
+            logger.warn('💡 Browser blocked autoplay. User needs to interact with page first.');
           }
         });
       } else {
@@ -5512,19 +5524,32 @@ function initHeroJumboInteraction() {
   // ============================================
   function playHeroSound() {
     try {
+      // Use absolute path for GitHub Pages compatibility
+      const audioPath = window.location.hostname.includes('github.io') 
+        ? '/FX-Travel-Jumbo-Interactive/assets/sounds/hero-sound.mp3'
+        : './assets/sounds/hero-sound.mp3';
+      
+      logger.log('🔊 Loading hero sound from:', audioPath);
+      
       // Always create a new audio instance for better compatibility
-      const audio = new Audio('./assets/sounds/hero-sound.mp3');
+      const audio = new Audio(audioPath);
       audio.volume = 1.0;
       audio.preload = 'auto';
       
-      // Add error handling
+      // Add detailed error handling
       audio.addEventListener('error', (e) => {
         logger.error('❌ Hero sound load error:', e);
         logger.error('Error code:', audio.error ? audio.error.code : 'unknown');
+        logger.error('Audio src:', audio.src);
+        logger.error('Audio currentSrc:', audio.currentSrc);
       });
       
       audio.addEventListener('canplaythrough', () => {
         logger.log('✅ Hero sound ready to play');
+      });
+      
+      audio.addEventListener('loadeddata', () => {
+        logger.log('✅ Hero sound data loaded');
       });
       
       // Play with proper error handling
@@ -5535,9 +5560,10 @@ function initHeroJumboInteraction() {
           logger.log('✅ Hero sound playing successfully');
         }).catch(error => {
           logger.warn('⚠️ Hero sound playback failed:', error.name, error.message);
+          logger.warn('Error details:', error);
           // Fallback: try again with user gesture
           if (error.name === 'NotAllowedError') {
-            logger.warn('💡 Browser blocked autoplay. Click anywhere on page first.');
+            logger.warn('💡 Browser blocked autoplay. User needs to interact with page first.');
           }
         });
       }
