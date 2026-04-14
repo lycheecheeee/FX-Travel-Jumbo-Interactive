@@ -5907,10 +5907,11 @@ function initHeroJumboInteraction() {
     // Update speech bubble with pop animation
     const bubble = document.getElementById('heroSpeechBubble');
     if (bubble) {
-      // Get the inner content div
+      // REVERSE THINKING: No animation reset on click either!
+      // Just direct content update - the Jumbo bounce is feedback enough
       const innerDiv = bubble.querySelector('div');
       if (innerDiv) {
-        // Directly update content without fade out
+        // Directly update content - NO animation manipulation
         innerDiv.innerHTML = `
           <div style="font-size:14px;font-weight:700;color:#7B2FBE;margin-bottom:4px;">${msg.greeting}</div>
           <div style="font-size:12px;color:#1a1a1a;line-height:1.4;">${msg.message}</div>
@@ -5918,11 +5919,7 @@ function initHeroJumboInteraction() {
           <!-- Arrow pointing down -->
           <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(255,255,255,0.95);"></div>
         `;
-        // Trigger pop animation
-        innerDiv.style.animation = 'none';
-        innerDiv.offsetHeight; // Force reflow
-        innerDiv.style.animation = 'speechBubblePop 0.6s ease-out forwards';
-        innerDiv.style.opacity = '1';
+        // NO animation reset - bubble stays stable and visible
       }
     }
     
@@ -6005,10 +6002,11 @@ function initHeroJumboInteraction() {
       const randomIndex = Math.floor(Math.random() * messages.length);
       const msg = messages[randomIndex];
       
-      // Update speech bubble smoothly (no fade out to avoid disappearance)
+      // REVERSE THINKING APPROACH: No animation reset, just direct content update
+      // This eliminates all flickering and disappearance issues
       const bubble = document.getElementById('heroSpeechBubble');
       if (bubble) {
-        // Direct content update without opacity change
+        // Direct content replacement - NO animation manipulation at all
         bubble.innerHTML = `
           <div style="font-size:13px;font-weight:700;color:#7B2FBE;margin-bottom:3px;">${msg.greeting}</div>
           <div style="font-size:11px;color:#1a1a1a;line-height:1.4;">${msg.message}</div>
@@ -6017,10 +6015,8 @@ function initHeroJumboInteraction() {
           <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(255,255,255,0.95);"></div>
         `;
         
-        // Subtle pop animation only (no opacity change)
-        bubble.style.animation = 'none';
-        bubble.offsetHeight; // Trigger reflow
-        bubble.style.animation = 'speechBubblePop 0.4s ease-out';
+        // NO animation reset here - the bubble stays stable
+        // Animation only plays once on initial page load
       }
       
       // Jumbo bounce animation
