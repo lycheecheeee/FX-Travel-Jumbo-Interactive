@@ -1,5 +1,5 @@
 {
-  "buildCommand": null,
+  "buildCommand": "echo 'No build required - static site'",
   "outputDirectory": "dist",
   "devCommand": null,
   "installCommand": null,
