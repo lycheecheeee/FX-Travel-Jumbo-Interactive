@@ -2222,21 +2222,21 @@ details.animate-fade-in-up:hover {
 <div class="cursor-follower"></div>
 
 <!-- Hero Section - Video Only with SVG Gradient Background -->
-<section class="hero-interactive" style="position:relative;min-height:70vh;max-height:90vh;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+<section class="hero-interactive" style="position:relative;min-height:70vh;max-height:90vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);">
   <!-- Animated Particles Background -->
   <div id="heroParticles" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></div>
   
-  <!-- SVG Gradient Background -->
-  <svg style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;" preserveAspectRatio="xMidYMid slice">
+  <!-- SVG Gradient Background - 优化渐变消除黑影 -->
+  <svg style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.6;" preserveAspectRatio="xMidYMid slice">
     <defs>
       <radialGradient id="grad1" cx="50%" cy="50%" r="70%">
-        <stop offset="0%" style="stop-color:#7B2FBE;stop-opacity:0.4" />
-        <stop offset="50%" style="stop-color:#ec4899;stop-opacity:0.25" />
-        <stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:1" />
+        <stop offset="0%" style="stop-color:#7B2FBE;stop-opacity:0.3" />
+        <stop offset="50%" style="stop-color:#ec4899;stop-opacity:0.2" />
+        <stop offset="100%" style="stop-color:#2d1b4e;stop-opacity:0.8" />
       </radialGradient>
       <radialGradient id="grad2" cx="30%" cy="70%" r="50%">
-        <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.2" />
-        <stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0" />
+        <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.15" />
+        <stop offset="100%" style="stop-color:#2d1b4e;stop-opacity:0" />
       </radialGradient>
     </defs>
     <rect width="100%" height="100%" fill="url(#grad1)" />
@@ -2373,8 +2373,8 @@ details.animate-fade-in-up:hover {
   <!-- Mouse Follow Glow -->
   <div id="heroMouseGlow" style="position:absolute;width:500px;height:500px;background:radial-gradient(circle, rgba(123,47,190,0.15) 0%, rgba(236,72,153,0.08) 40%, transparent 70%);border-radius:50%;filter:blur(80px);pointer-events:none;z-index:1;transition:all 0.4s ease;opacity:0;"></div>
   
-  <!-- Main Video (Actual Size, Centered) -->
-  <video id="heroVideo" loop playsinline muted autoplay preload="metadata" style="position:relative;z-index:2;max-width:min(95vw,1600px);width:auto;height:auto;max-height:85vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 100px rgba(123,47,190,0.3);animation:videoFadeIn 1.5s ease-out;background:#0a0a0f;object-fit:contain;">
+  <!-- Main Video (Actual Size, Centered) - 优化背景消除黑影 -->
+  <video id="heroVideo" loop playsinline muted autoplay preload="metadata" style="position:relative;z-index:2;max-width:min(95vw,1600px);width:auto;height:auto;max-height:85vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.3),0 0 100px rgba(123,47,190,0.2);animation:videoFadeIn 1.5s ease-out;background:transparent;object-fit:contain;">
     <source src="./assets/Section%201_Hero%20video/0_hero-video.mp4" type="video/mp4">
     <!-- Fallback message if video fails to load -->
     <div style="color:white;text-align:center;padding:40px;">視頻加載中...</div>
