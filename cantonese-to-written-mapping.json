@@ -1,0 +1,122 @@
+{
+  "description": "廣東話口語 → 正式書面語（繁體中文）對照表",
+  "version": "1.0",
+  "lastUpdated": "2026-04-14",
+  "replacements": [
+    {
+      "from": "有嘢講",
+      "to": "有話要說",
+      "category": "common"
+    },
+    {
+      "from": "唔使",
+      "to": "不用",
+      "category": "common"
+    },
+    {
+      "from": "交俾",
+      "to": "交給",
+      "category": "common"
+    },
+    {
+      "from": "幫緊你",
+      "to": "正在幫你",
+      "category": "common"
+    },
+    {
+      "from": "睇下",
+      "to": "看看",
+      "category": "common"
+    },
+    {
+      "from": "幾時",
+      "to": "何時",
+      "category": "common"
+    },
+    {
+      "from": "邊個",
+      "to": "誰",
+      "category": "common"
+    },
+    {
+      "from": "點解",
+      "to": "為什麼",
+      "category": "common"
+    },
+    {
+      "from": "做咩",
+      "to": "做什麼",
+      "category": "common"
+    },
+    {
+      "from": "係咪",
+      "to": "是不是",
+      "category": "common"
+    },
+    {
+      "from": "有冇",
+      "to": "有沒有",
+      "category": "common"
+    },
+    {
+      "from": "知唔知",
+      "to": "知不知道",
+      "category": "common"
+    },
+    {
+      "from": "得唔得",
+      "to": "可不可以",
+      "category": "common"
+    },
+    {
+      "from": "好唔好",
+      "to": "好不好",
+      "category": "common"
+    },
+    {
+      "from": "叫外賣",
+      "to": "叫外送",
+      "category": "daily"
+    },
+    {
+      "from": "盯緊",
+      "to": "密切關注",
+      "category": "daily"
+    },
+    {
+      "from": "小氣簿",
+      "to": "小氣記錄簿",
+      "category": "daily"
+    },
+    {
+      "from": "晚點付",
+      "to": "稍後付款",
+      "category": "daily"
+    },
+    {
+      "from": "塞得滿滿",
+      "to": "裝得滿滿",
+      "category": "daily"
+    },
+    {
+      "from": "比雞起得還早",
+      "to": "比公雞起得還早",
+      "category": "idiom"
+    },
+    {
+      "from": "花錢買罪受",
+      "to": "花費金錢卻承受辛苦",
+      "category": "idiom"
+    },
+    {
+      "from": "玩得幾盡",
+      "to": "玩得有多盡興",
+      "category": "expression"
+    },
+    {
+      "from": "睇得幾清",
+      "to": "看得有多清楚",
+      "category": "expression"
+    }
+  ]
+}

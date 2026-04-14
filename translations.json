@@ -15,7 +15,9 @@
     "other.fps.title": "FPS 轉數快結算",
     "other.fps.desc": "一鍵生成個人 FPS 二維碼，或掃描朋友二維碼，即時完成分帳轉賬。旅行後快速結清，安全又便捷。",
     "other.daily.title": "日常開支管理",
-    "other.daily.desc": "不僅限於旅行，日常消費同樣適用。個人記帳、朋友聚餐 AA 制，一站式管理所有財務記錄，讓每一筆支出清晰有序。"
+    "other.daily.desc": "不僅限於旅行，日常消費同樣適用。個人記帳、朋友聚餐 AA 制，一站式管理所有財務記錄，讓每一筆支出清晰有序。",
+    "cta.jumbo.greeting": "出發喇",
+    "cta.jumbo.message": "帶埋我去環遊世界啦"
   },
   "zh-CN": {
     "brand.name": "外游象宝",
@@ -33,7 +35,9 @@
     "other.fps.title": "FPS 快速结算",
     "other.fps.desc": "一键生成个人 FPS 二维码，或扫描朋友二维码，即时完成分账转账。旅行后快速结清，安全又便捷。",
     "other.daily.title": "日常开支管理",
-    "other.daily.desc": "不仅限于旅行，日常消费同样适用。个人记账、朋友聚餐 AA 制，一站式管理所有财务记录，让每一笔支出清晰有序。"
+    "other.daily.desc": "不仅限于旅行，日常消费同样适用。个人记账、朋友聚餐 AA 制，一站式管理所有财务记录，让每一笔支出清晰有序。",
+    "cta.jumbo.greeting": "出发啦",
+    "cta.jumbo.message": "带我去环游世界吧"
   },
   "en": {
     "brand.name": "FX Travel Jumbo",
@@ -51,7 +55,9 @@
     "other.fps.title": "FPS Quick Settlement",
     "other.fps.desc": "Generate your personal FPS QR code with one tap, or scan friends' codes to instantly complete split payments. Fast and secure post-trip settlement.",
     "other.daily.title": "Daily Expense Tracking",
-    "other.daily.desc": "Not just for travel—perfect for daily spending too. Manage personal expenses and group splits all in one place, keeping every transaction clear and organized."
+    "other.daily.desc": "Not just for travel—perfect for daily spending too. Manage personal expenses and group splits all in one place, keeping every transaction clear and organized.",
+    "cta.jumbo.greeting": "Let's Go!",
+    "cta.jumbo.message": "Take me around the world!"
   },
   "ja": {
     "brand.name": "FX トラベル ジャンボ",
@@ -69,7 +75,9 @@
     "other.fps.title": "FPS クイック決済",
     "other.fps.desc": "個人のFPS QRコードをワンタップで生成、または友人のコードをスキャンして分割支払いを即座に完了。旅行後の精算が迅速かつ安全。",
     "other.daily.title": "日常支出管理",
-    "other.daily.desc": "旅行だけでなく、日常の消費にも最適。個人の記帳やグループでの割り勘を一元管理し、すべての取引を明確に整理。"
+    "other.daily.desc": "旅行だけでなく、日常の消費にも最適。個人の記帳やグループでの割り勘を一元管理し、すべての取引を明確に整理。",
+    "cta.jumbo.greeting": "出発！",
+    "cta.jumbo.message": "世界中を旅しましょう！"
   },
   "ko": {
     "brand.name": "FX 트래블 점보",
@@ -87,6 +95,8 @@
     "other.fps.title": "FPS 빠른 정산",
     "other.fps.desc": "개인 FPS QR 코드를 원터치로 생성하거나 친구의 코드를 스캔하여 즉시 분할 결제 완료. 여행 후 신속하고 안전한 정산.",
     "other.daily.title": "일상 지출 관리",
-    "other.daily.desc": "여행뿐만 아니라 일상 소비에도 최적. 개인 가계부 및 그룹 분할 결제를 한 곳에서 관리하여 모든 거래를 명확하게 정리."
+    "other.daily.desc": "여행뿐만 아니라 일상 소비에도 최적. 개인 가계부 및 그룹 분할 결제를 한 곳에서 관리하여 모든 거래를 명확하게 정리.",
+    "cta.jumbo.greeting": "출발!",
+    "cta.jumbo.message": "전 세계를 여행해요!"
   }
 }

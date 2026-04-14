@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<title>[V2]外遊象寶 FX Travel Jumbo - 旅行記賬分帳 · 即時匯率換算</title>
+<meta name="description" content="FX Travel Jumbo 外遊象寶 - OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta name="theme-color" content="#7B2FBE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fxtraveljumbo.com/">
+<meta property="og:title" content="外遊象寶 FX Travel Jumbo — 旅行記賬分帳 · 即時匯率換算">
+<meta property="og:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta property="og:image" content="./assets/app-icon/app-icon-new.png">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://fxtraveljumbo.com/">
+<meta property="twitter:title" content="外遊象寶 FX Travel Jumbo">
+<meta property="twitter:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤">
+<meta property="twitter:image" content="./assets/app-icon/app-icon-new.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="./assets/app-icon/app-icon-new.png">
+<link rel="apple-touch-icon" href="./assets/app-icon/app-icon-new.png">
+
+<!-- Preload critical resources -->
+<link rel="preload" href="./assets/jumbo-gif/jumbo-wave-transparent.gif" as="image" type="image/gif">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json">
+
+<script>
+const CONFIG = {
+  isDevelopment: true,
+  version: 'v3.0-super-creative',
+  buildDate: '2026-04-14'
+};
+
+const logger = {
+  log: (...args) => CONFIG.isDevelopment && console.log('[INFO]', ...args),
+  warn: (...args) => CONFIG.isDevelopment && console.warn('[WARN]', ...args),
+  error: (...args) => CONFIG.isDevelopment && console.error('[ERROR]', ...args)
+};
+
+// Custom Cursor System
+class CustomCursor {
+  constructor() {
+    this.cursor = document.createElement('div');
+    this.cursor.className = 'custom-cursor';
+    this.dot = document.createElement('div');
+    this.dot.className = 'cursor-dot';
+    document.body.appendChild(this.cursor);
+    document.body.appendChild(this.dot);
+    
+    this.posX = 0;
+    this.posY = 0;
+    this.cursorX = 0;
+    this.cursorY = 0;
+    
+    this.init();
+  }
+  
+  init() {
+    document.addEventListener('mousemove', (e) => {
+      this.posX = e.clientX;
+      this.posY = e.clientY;
+      this.dot.style.left = this.posX + 'px';
+      this.dot.style.top = this.posY + 'px';
+    });
+    
+    // Smooth cursor follow
+    this.animate();
+    
+    // Hover effects
+    const interactiveElements = document.querySelectorAll('a, button, .feature-card, .currency-item, .jumbo-mascot, .download-btn');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => this.cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => this.cursor.classList.remove('hover'));
+    });
+  }
+  
+  animate() {
+    this.cursorX += (this.posX - this.cursorX) * 0.15;
+    this.cursorY += (this.posY - this.cursorY) * 0.15;
+    this.cursor.style.left = this.cursorX + 'px';
+    this.cursor.style.top = this.cursorY + 'px';
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Scroll Progress Bar
+class ScrollProgress {
+  constructor() {
+    this.progressBar = document.createElement('div');
+    this.progressBar.className = 'scroll-progress';
+    document.body.appendChild(this.progressBar);
+    this.init();
+  }
+  
+  init() {
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      this.progressBar.style.width = scrolled + '%';
+    });
+  }
+}
+
+// Parallax Effect
+class ParallaxEffect {
+  constructor() {
+    this.elements = document.querySelectorAll('.feature-card, .currency-item');
+    this.init();
+  }
+  
+  init() {
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      this.elements.forEach((el, index) => {
+        const speed = 0.5 + (index % 3) * 0.1;
+        const yPos = -(scrolled * speed * 0.05);
+        el.style.transform = `translateY(${yPos}px)`;
+      });
+    });
+  }
+}
+
+// Particle System for Hero
+class ParticleSystem {
+  constructor() {
+    this.particles = [];
+    this.canvas = null;
+    this.ctx = null;
+    this.init();
+  }
+  
+  init() {
+    // Create canvas overlay
+    this.canvas = document.createElement('canvas');
+    this.canvas.style.position = 'absolute';
+    this.canvas.style.top = '0';
+    this.canvas.style.left = '0';
+    this.canvas.style.width = '100%';
+    this.canvas.style.height = '100%';
+    this.canvas.style.pointerEvents = 'none';
+    this.canvas.style.zIndex = '1';
+    
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+      heroSection.appendChild(this.canvas);
+      this.ctx = this.canvas.getContext('2d');
+      this.resize();
+      this.createParticles();
+      this.animate();
+      
+      window.addEventListener('resize', () => this.resize());
+    }
+  }
+  
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+  
+  createParticles() {
+    for (let i = 0; i < 50; i++) {
+      this.particles.push({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 3 + 1,
+        speedX: Math.random() * 2 - 1,
+        speedY: Math.random() * 2 - 1,
+        opacity: Math.random() * 0.5 + 0.2
+      });
+    }
+  }
+  
+  animate() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    this.particles.forEach(particle => {
+      particle.x += particle.speedX;
+      particle.y += particle.speedY;
+      
+      if (particle.x < 0 || particle.x > this.canvas.width) particle.speedX *= -1;
+      if (particle.y < 0 || particle.y > this.canvas.height) particle.speedY *= -1;
+      
+      this.ctx.beginPath();
+      this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+      this.ctx.fillStyle = `rgba(123, 47, 190, ${particle.opacity})`;
+      this.ctx.fill();
+    });
+    
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Ripple Effect on Click
+class RippleEffect {
+  constructor() {
+    this.init();
+  }
+  
+  init() {
+    document.addEventListener('click', (e) => {
+      const ripple = document.createElement('div');
+      ripple.style.position = 'fixed';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.background = 'rgba(123, 47, 190, 0.6)';
+      ripple.style.borderRadius = '50%';
+      ripple.style.transform = 'translate(-50%, -50%)';
+      ripple.style.pointerEvents = 'none';
+      ripple.style.animation = 'ripple 0.6s ease-out';
+      ripple.style.zIndex = '9998';
+      
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  }
+}
+
+// Intersection Observer for Animations
+class ScrollAnimations {
+  constructor() {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    
+    this.init();
+  }
+  
+  init() {
+    const animatedElements = document.querySelectorAll('.feature-card, .currency-item, .faq-item');
+    animatedElements.forEach((el, index) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(50px)';
+      el.style.transition = `all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) ${index * 0.1}s`;
+      this.observer.observe(el);
+    });
+  }
+}
+</script>
+
+<style>
+:root {
+  --primary-purple: #7B2FBE;
+  --secondary-pink: #EC4899;
+  --accent-cyan: #06b6d4;
+  --accent-yellow: #fbbf24;
+  --text-dark: #1a1a1a;
+  --text-light: #ffffff;
+  --bg-light: rgba(255, 255, 255, 0.95);
+  --shadow-soft: 0 4px 15px rgba(123, 47, 190, 0.15);
+  --shadow-medium: 0 8px 30px rgba(123, 47, 190, 0.2);
+  --shadow-glow: 0 0 40px rgba(123, 47, 190, 0.6);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans TC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+  color: white;
+  cursor: none;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary-pink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, background 0.15s ease;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor.hover {
+  transform: scale(2);
+  background: rgba(236, 72, 153, 0.3);
+}
+
+.cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: var(--secondary-pink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes jumboFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(3deg); } }
+@keyframes simpleFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes videoFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(123, 47, 190, 0.4); } 50% { box-shadow: 0 0 40px rgba(123, 47, 190, 0.8); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-5deg); } 75% { transform: translateX(5px) rotate(5deg); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes slide-in-left { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slide-in-right { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes ripple { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
+
+/* Scroll Progress Bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-purple), var(--secondary-pink), var(--accent-cyan));
+  z-index: 10001;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px rgba(123, 47, 190, 0.8);
+}
+
+/* Navigation */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+  padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(123, 47, 190, 0.2);
+  transition: all 0.3s ease;
+}
+
+nav.scrolled {
+  background: rgba(26, 11, 46, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.nav-brand { 
+  font-size: 20px; font-weight: 700; color: white;
+  background: linear-gradient(135deg, #fff, var(--secondary-pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.nav-links { display: flex; gap: 20px; }
+.nav-link { 
+  color: white; text-decoration: none; font-weight: 500; 
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--secondary-pink);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::before {
+  width: 80%;
+}
+
+.nav-link:hover {
+  background: rgba(123, 47, 190, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 70vh; max-height: 90vh; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; 
+  background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.hero-content {
+  max-width: 1200px; width: 100%; padding: 80px 20px 40px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+}
+
+.hero-text h1 {
+  font-size: clamp(32px, 5vw, 56px); color: white;
+  margin-bottom: 20px; line-height: 1.2;
+  animation: slide-in-left 1s ease-out;
+  text-shadow: 0 0 30px rgba(123, 47, 190, 0.5);
+}
+
+.hero-text p {
+  font-size: clamp(16px, 2vw, 20px); color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 30px; line-height: 1.6;
+  animation: slide-in-left 1s ease-out 0.2s backwards;
+}
+
+.jumbo-container { 
+  position: relative; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  animation: float 3s ease-in-out infinite;
+}
+
+.jumbo-mascot { 
+  cursor: pointer; 
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+.jumbo-mascot::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(123, 47, 190, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.jumbo-mascot:hover::before {
+  opacity: 1;
+}
+
+.jumbo-mascot img {
+  width: clamp(80px, 15vw, 180px); height: auto;
+  filter: drop-shadow(0 10px 30px rgba(123, 47, 190, 0.4));
+  animation: jumboFloat 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.jumbo-mascot:hover img {
+  transform: scale(1.1) rotate(10deg);
+  filter: drop-shadow(0 20px 50px rgba(123, 47, 190, 0.8));
+}
+
+.jumbo-mascot:active img {
+  animation: shake 0.5s ease;
+}
+
+.speech-bubble {
+  position: absolute; top: -95px; left: 50%; margin-left: -100px;
+  pointer-events: auto; opacity: 0; animation: simpleFadeIn 0.5s ease-out 1s forwards;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.speech-bubble:hover {
+  transform: scale(1.1) rotate(-2deg);
+}
+
+.speech-bubble-content {
+  background: #fff; border: 2px solid var(--primary-purple);
+  border-radius: 12px; padding: 10px 16px; min-width: 200px;
+  text-align: center; box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.speech-bubble-content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(123, 47, 190, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.speech-bubble-greeting {
+  font-size: 14px; font-weight: 700; color: var(--primary-purple); margin-bottom: 4px;
+}
+
+.speech-bubble-message {
+  font-size: 12px; color: var(--text-dark); line-height: 1.5;
+  white-space: normal;
+}
+
+.speech-bubble-arrow {
+  position: absolute; bottom: -8px; left: 50%; margin-left: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid transparent; border-right: 8px solid transparent;
+  border-top: 8px solid var(--primary-purple);
+}
+
+#heroVideo {
+  position: relative; z-index: 2; max-width: min(95vw, 1600px);
+  width: auto; height: auto; max-height: 85vh; border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 100px rgba(123,47,190,0.2);
+  animation: videoFadeIn 1.5s ease-out, glow 3s ease-in-out infinite;
+  background: transparent; object-fit: contain;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+#heroVideo:hover {
+  transform: scale(1.02);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 120px rgba(123,47,190,0.4);
+}
+
+/* Sections */
+.feature-section {
+  position: relative; padding: clamp(80px, 12vh, 120px) 20px;
+  overflow: hidden;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 80px); }
+
+.section-header { text-align: center; margin-bottom: clamp(60px, 8vw, 80px); }
+.section-subtitle {
+  font-size: clamp(12px, 1.5vw, 14px); color: var(--secondary-pink);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(32px, 5vw, 48px); font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #f0abfc 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 16px;
+}
+.section-desc {
+  font-size: clamp(15px, 2.5vw, 18px); color: rgba(255,255,255,0.7);
+  max-width: 600px; margin: 0 auto;
+}
+
+/* Feature Cards */
+.feature-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: clamp(40px, 6vw, 80px); align-items: center;
+}
+
+.feature-card {
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+  border: 1px solid rgba(123,47,190,0.2); border-radius: 20px;
+  padding: clamp(24px, 4vw, 32px); 
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(123, 47, 190, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.feature-card:hover::before {
+  left: 100%;
+}
+
+.feature-card:hover {
+  border-color: rgba(123,47,190,0.8); 
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 30px 80px rgba(123,47,190,0.5), 0 0 40px rgba(236,72,153,0.3);
+}
+
+.feature-card:active {
+  transform: translateY(-8px) scale(0.98);
+}
+
+/* Currency Grid */
+.currency-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px; margin-top: 40px;
+}
+
+.currency-item {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(123,47,190,0.2);
+  border-radius: 12px; padding: 16px; text-align: center;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.currency-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(123, 47, 190, 0.4) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.currency-item:hover {
+  background: rgba(123,47,190,0.3); 
+  transform: translateY(-8px) scale(1.1) rotate(5deg);
+  border-color: var(--secondary-pink);
+  box-shadow: 0 15px 40px rgba(123,47,190,0.5);
+}
+
+.currency-item:hover::after {
+  opacity: 1;
+}
+
+.currency-flag { font-size: 32px; margin-bottom: 8px; transition: transform 0.3s ease; }
+.currency-item:hover .currency-flag { transform: scale(1.3) rotate(360deg); }
+.currency-code { font-weight: 700; font-size: 14px; }
+
+/* FAQ */
+.faq-item {
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+  border: 1px solid rgba(123,47,190,0.2); border-radius: 16px;
+  margin-bottom: 16px; overflow: hidden; transition: all 0.3s ease;
+}
+
+.faq-item:hover { border-color: rgba(123,47,190,0.5); }
+
+.faq-question {
+  padding: clamp(20px, 3vw, 24px); font-weight: 700;
+  font-size: clamp(15px, 2.5vw, 17px); cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.faq-answer {
+  padding: 0 clamp(20px, 3vw, 24px) clamp(20px, 3vw, 24px);
+  font-size: clamp(13px, 2vw, 15px); color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+}
+
+/* Download CTA */
+.download-section {
+  text-align: center; padding: clamp(80px, 12vh, 120px) 20px;
+  background: linear-gradient(135deg, rgba(123,47,190,0.3) 0%, rgba(236,72,153,0.2) 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.download-section::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(123, 47, 190, 0.2) 0%, transparent 70%);
+  animation: spin-slow 20s linear infinite;
+}
+
+.download-buttons {
+  display: flex; gap: 20px; justify-content: center;
+  flex-wrap: wrap; margin-top: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.download-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: white; color: var(--text-dark); padding: 16px 32px;
+  border-radius: 12px; text-decoration: none; font-weight: 700;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: var(--shadow-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.download-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(123, 47, 190, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.download-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.download-btn:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 20px 60px rgba(123,47,190,0.6);
+}
+
+.download-btn:active {
+  transform: translateY(-4px) scale(0.98);
+}
+
+/* Footer */
+footer {
+  background: rgba(0,0,0,0.3); padding: 40px 20px;
+  text-align: center; color: rgba(255,255,255,0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content { grid-template-columns: 1fr; text-align: center; }
+  .speech-bubble { 
+    top: auto; 
+    bottom: calc(100% + 8px); 
+    left: 50%; 
+    margin-left: -100px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  .speech-bubble-arrow { 
+    bottom: auto; 
+    top: 100%; 
+    border-top: none; 
+    border-bottom: 8px solid var(--primary-purple);
+  }
+  .nav-links { display: none; }
+  .feature-grid { grid-template-columns: 1fr; }
+  
+  /* Mobile optimizations */
+  .custom-cursor, .cursor-dot { display: none; }
+  body { cursor: auto; }
+  
+  .jumbo-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+  
+  .jumbo-mascot img {
+    width: 80px;
+  }
+  
+  .currency-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+  
+  .download-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .download-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Large screens */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .hero-text h1 {
+    font-size: 64px;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand" data-i18n="brand.name">外遊象寶</div>
+  <div class="nav-links">
+    <a href="#appIntro" class="nav-link" data-i18n="nav.about">關於</a>
+    <a href="#coreFeatures" class="nav-link" data-i18n="nav.features">核心功能</a>
+    <a href="#currencies" class="nav-link" data-i18n="nav.currencies">支援貨幣</a>
+    <a href="#howToUse" class="nav-link" data-i18n="nav.tutorial">使用教學</a>
+    <a href="#faq" class="nav-link" data-i18n="nav.faq">常見問題</a>
+  </div>
+</nav>
+
+<section class="hero-section">
+  <video id="heroVideo" loop playsinline muted autoplay preload="metadata">
+    <source src="/assets/Section%201_Hero%20video/0_hero-video.mp4" type="video/mp4">
+  </video>
+  
+  <div class="jumbo-container" style="position:absolute;bottom:clamp(80px,12vh,140px);right:clamp(40px,5vw,80px);z-index:10;">
+    <div class="jumbo-mascot" id="heroJumboMascot">
+      <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif" alt="外遊象寶" loading="lazy">
+      <div class="speech-bubble" id="heroSpeechBubble">
+        <div class="speech-bubble-content">
+          <div class="speech-bubble-greeting" data-i18n="hero.jumbo.greeting1">你好呀！</div>
+          <div class="speech-bubble-message" data-i18n="hero.jumbo.message1">我係外遊象寶，幫你輕鬆管理旅行開支！</div>
+          <div class="speech-bubble-arrow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="appIntro" style="background:var(--dark);">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">專為旅人設計的財務管理App</h2>
+      <p class="section-desc">從出發前換錢到回程後結帳，全程陪你。</p>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="coreFeatures">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-subtitle">核心功能</div>
+      <h2 class="section-title">你需要的，象寶都有</h2>
+      <p class="section-desc">專為旅人設計的財務管理App，從出發前換錢到回程後結帳，全程陪你。</p>
+    </div>
+    
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div style="font-size:48px;margin-bottom:16px;">📸</div>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">OCR 拍照翻譯</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">對住收據拍張相，即刻自動識別金額同貨幣，唔使手動輸入。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div style="font-size:48px;margin-bottom:16px;">👥</div>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">多人分賬</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">建立旅行群組，自動計算每人應付金額，公平又簡單。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div style="font-size:48px;margin-bottom:16px;">💱</div>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">即時匯率</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">支援17種貨幣，實時更新匯率，隨時知道最準確嘅兌換比例。</p>
+      </div>
+      
+      <div class="feature-card">
+        <div style="font-size:48px;margin-bottom:16px;">📊</div>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">智能記帳</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">自動分類支出，生成視覺化報表，清晰掌握旅行預算。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="currencies" style="background:linear-gradient(135deg,rgba(123,47,190,0.25) 0%,rgba(20,20,30,0.8) 50%,rgba(236,72,153,0.2) 100%);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-subtitle">全球通行</div>
+      <h2 class="section-title">支援 17+ 種貨幣</h2>
+      <p class="section-desc">無論你去邊度旅行，象寶都幫到你。</p>
+    </div>
+    
+    <div class="currency-grid">
+      <div class="currency-item"><div class="currency-flag">🇭🇰</div><div class="currency-code">HKD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇯🇵</div><div class="currency-code">JPY</div></div>
+      <div class="currency-item"><div class="currency-flag">🇰🇷</div><div class="currency-code">KRW</div></div>
+      <div class="currency-item"><div class="currency-flag">🇺🇸</div><div class="currency-code">USD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇬🇧</div><div class="currency-code">GBP</div></div>
+      <div class="currency-item"><div class="currency-flag">🇪🇺</div><div class="currency-code">EUR</div></div>
+      <div class="currency-item"><div class="currency-flag">🇨🇳</div><div class="currency-code">CNY</div></div>
+      <div class="currency-item"><div class="currency-flag">🇦🇺</div><div class="currency-code">AUD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇨🇦</div><div class="currency-code">CAD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇨🇭</div><div class="currency-code">CHF</div></div>
+      <div class="currency-item"><div class="currency-flag">🇸🇬</div><div class="currency-code">SGD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇹🇭</div><div class="currency-code">THB</div></div>
+      <div class="currency-item"><div class="currency-flag">🇲🇾</div><div class="currency-code">MYR</div></div>
+      <div class="currency-item"><div class="currency-flag">🇮🇩</div><div class="currency-code">IDR</div></div>
+      <div class="currency-item"><div class="currency-flag">🇳🇿</div><div class="currency-code">NZD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇹🇼</div><div class="currency-code">TWD</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="howToUse">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-subtitle">簡單易用</div>
+      <h2 class="section-title">3 步開始使用</h2>
+      <p class="section-desc">無需複雜設定，即刻開始記錄旅行開支。</p>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:clamp(24px,4vw,32px);">
+      <div class="feature-card text-center">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary-purple),#5a1f8a);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;font-weight:900;color:white;">1</div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;">下載 App</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">從 App Store 或 Google Play 免費下載</p>
+      </div>
+      
+      <div class="feature-card text-center">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--secondary-pink),var(--primary-purple));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;font-weight:900;color:white;">2</div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;">建立群組</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">邀請旅伴加入，開始共同記帳</p>
+      </div>
+      
+      <div class="feature-card text-center">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,var(--secondary-pink));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;font-weight:900;color:white;">3</div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;">開始記帳</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">拍照或手動輸入，自動分帳計算</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="faq">
+  <div class="container" style="max-width:900px;">
+    <div class="section-header">
+      <div class="section-subtitle">常見問題</div>
+      <h2 class="section-title">有疑問？我哋解答</h2>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">我的數據安唔安全？<span>▼</span></div>
+      <div class="faq-answer">絕對安全！所有數據都經過加密傳輸同儲存，我哋嚴肅對待私隱問題。你可以隨時喺設定內備份或刪除所有數據。</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">需要付費嗎？<span>▼</span></div>
+      <div class="faq-answer">基本功能完全免費！包括OCR識別、多人分帳、匯率查詢等核心功能。未來可能會推出高級功能，但基礎版本永遠免費。</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">支援離線使用嗎？<span>▼</span></div>
+      <div class="faq-answer">是的！即使沒有網絡，你都可以正常記帳和查看歷史記錄。匯率數據會在有網絡時自動同步更新。</div>
+    </div>
+  </div>
+</section>
+
+<section class="download-section">
+  <div class="container">
+    <h2 class="section-title">準備好開始你的旅程了嗎？</h2>
+    <p class="section-desc" style="margin-bottom:40px;">立即免費下載，讓外遊象寶陪你探索世界</p>
+    
+    <div class="download-buttons">
+      <a href="https://apps.apple.com/app/fx-travel-jumbo" class="download-btn">
+        <span style="font-size:32px;">🍎</span>
+        <div style="text-align:left;"><div style="font-size:12px;color:#666;">Download on the</div><div style="font-size:18px;">App Store</div></div>
+      </a>
+      
+      <a href="https://play.google.com/store/apps/details?id=com.fxtraveljumbo" class="download-btn">
+        <span style="font-size:32px;">▶️</span>
+        <div style="text-align:left;"><div style="font-size:12px;color:#666;">GET IT ON</div><div style="font-size:18px;">Google Play</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 外遊象寶 FX Travel Jumbo. All rights reserved.</p>
+  <p style="margin-top:8px;font-size:14px;">Made with ❤️ for travelers</p>
+</footer>
+
+<script>
+class AudioSystem {
+  playSound(soundType, volume = 1.0) {
+    try {
+      const audioPath = soundType === 'hero' ? '/assets/sounds/hero-sound.mp3' : '/assets/sounds/bottom-sound.wav';
+      logger.log(`🔊 Playing ${soundType} sound from:`, audioPath);
+      
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(error => logger.warn(`⚠️ Playback failed:`, error));
+      return audio;
+    } catch (error) {
+      logger.error(`❌ Sound error:`, error);
+      return null;
+    }
+  }
+}
+
+class SpeechBubbleManager {
+  constructor(bubbleElement) {
+    this.bubble = bubbleElement;
+    this.messages = [
+      { greeting: '你好呀！', message: '我係外遊象寶，幫你輕鬆管理旅行開支！' },
+      { greeting: '旅行開心啲！', message: '用我記賬，分帳超簡單～' },
+      { greeting: '匯率即時睇！', message: '唔使再計數計到頭痕啦！' }
+    ];
+    this.currentIndex = 0;
+    this.autoRotateTimer = null;
+  }
+  
+  updateMessage(index) {
+    if (!this.bubble) return;
+    const msg = this.messages[index];
+    const greetingDiv = this.bubble.querySelector('.speech-bubble-greeting');
+    const messageDiv = this.bubble.querySelector('.speech-bubble-message');
+    
+    if (greetingDiv && messageDiv) {
+      greetingDiv.innerHTML = msg.greeting;
+      messageDiv.innerHTML = msg.message;
+    }
+  }
+  
+  nextMessage() {
+    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+    this.updateMessage(this.currentIndex);
+  }
+  
+  startAutoRotate(interval = 15000) {
+    if (this.autoRotateTimer) clearInterval(this.autoRotateTimer);
+    this.autoRotateTimer = setInterval(() => this.nextMessage(), interval);
+  }
+}
+
+class JumboMascot {
+  constructor(element, audioSystem, bubbleManager) {
+    this.element = element;
+    this.audio = audioSystem;
+    this.bubble = bubbleManager;
+    this.lastPlayTime = 0;
+    this.init();
+  }
+  
+  init() {
+    this.element.addEventListener('click', () => this.handleClick());
+    this.element.addEventListener('mouseenter', () => this.handleMouseEnter());
+  }
+  
+  handleClick() {
+    this.audio.playSound('bottom');
+    if (this.bubble) this.bubble.nextMessage();
+    
+    this.element.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    this.element.style.transform = 'scale(1.05) rotate(5deg)';
+    setTimeout(() => { this.element.style.transform = 'scale(1) rotate(0deg)'; }, 300);
+  }
+  
+  handleMouseEnter() {
+    const now = Date.now();
+    if (now - this.lastPlayTime > 5000) {
+      this.lastPlayTime = now;
+      this.audio.playSound('bottom', 0.5);
+    }
+  }
+}
+
+class I18nManager {
+  constructor() {
+    this.translations = {};
+    this.currentLang = 'zh-TW';
+    this.loadTranslations();
+  }
+  
+  async loadTranslations() {
+    try {
+      const response = await fetch('./translations.json');
+      this.translations = await response.json();
+      this.applyTranslations();
+    } catch (error) {
+      logger.error('Failed to load translations:', error);
+    }
+  }
+  
+  applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const translation = this.translations[this.currentLang]?.[key];
+      if (translation) el.textContent = translation;
+    });
+  }
+  
+  setLanguage(lang) {
+    this.currentLang = lang;
+    this.applyTranslations();
+  }
+}
+
+class App {
+  constructor() {
+    this.audioSystem = new AudioSystem();
+    this.i18n = new I18nManager();
+    this.init();
+  }
+  
+  init() {
+    logger.log('🚀 Super Creative App v' + CONFIG.version + ' initializing...');
+    
+    // Initialize crazy effects
+    new CustomCursor();
+    new ScrollProgress();
+    new ParticleSystem();
+    new RippleEffect();
+    new ScrollAnimations();
+    
+    const bubbleElement = document.getElementById('heroSpeechBubble');
+    const bubbleManager = new SpeechBubbleManager(bubbleElement);
+    
+    const jumboElement = document.getElementById('heroJumboMascot');
+    new JumboMascot(jumboElement, this.audioSystem, bubbleManager);
+    
+    bubbleManager.startAutoRotate(15000);
+    
+    // FAQ toggle with animation
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const answer = q.nextElementSibling;
+        const arrow = q.querySelector('span');
+        
+        if (answer.style.display === 'none' || !answer.style.display) {
+          answer.style.display = 'block';
+          answer.style.animation = 'fadeIn 0.3s ease-out';
+          arrow.textContent = '▲';
+          arrow.style.transform = 'rotate(180deg)';
+        } else {
+          answer.style.display = 'none';
+          arrow.textContent = '▼';
+          arrow.style.transform = 'rotate(0deg)';
+        }
+      });
+    });
+    
+    // Navigation scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+    
+    // Currency items random rotation on hover
+    document.querySelectorAll('.currency-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        const randomRotation = (Math.random() - 0.5) * 20;
+        item.style.transform = `translateY(-8px) scale(1.1) rotate(${randomRotation}deg)`;
+      });
+    });
+    
+    // Feature cards tilt effect
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-12px) scale(1.02)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+      });
+    });
+    
+    logger.log('✅ Super Creative App initialized successfully 🎉');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => { window.app = new App(); });
+</script>
+
+</body>
+</html>

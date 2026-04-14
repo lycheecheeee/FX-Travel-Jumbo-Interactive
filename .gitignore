@@ -2,7 +2,10 @@
 node_modules/
 
 # Build outputs
-dist/
+# dist/ 已取消忽略,因為需要部署
+dist/assets/
+dist/js/
+dist/styles/
 build/
 
 # Environment variables
@@ -23,3 +26,8 @@ Thumbs.db
 
 # Testing
 coverage/
+
+# Temporary files
+*.tmp
+*.temp
+temp-*.html

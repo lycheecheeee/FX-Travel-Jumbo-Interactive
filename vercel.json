@@ -1,13 +1,13 @@
 {
   "buildCommand": null,
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "devCommand": null,
   "installCommand": null,
   "framework": null,
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/minisite-interactive-final_20260414_v1.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<title>外遊象寶 FX Travel Jumbo - 旅行記賬分帳 · 即時匯率換算</title>
+<meta name="description" content="FX Travel Jumbo 外遊象寶 - OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta name="theme-color" content="#7B2FBE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fxtraveljumbo.com/">
+<meta property="og:title" content="外遊象寶 FX Travel Jumbo — 旅行記賬分帳 · 即時匯率換算">
+<meta property="og:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta property="og:image" content="./assets/app-icon/app-icon-new.png">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://fxtraveljumbo.com/">
+<meta property="twitter:title" content="外遊象寶 FX Travel Jumbo">
+<meta property="twitter:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤">
+<meta property="twitter:image" content="./assets/app-icon/app-icon-new.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="./assets/app-icon/app-icon-new.png">
+<link rel="apple-touch-icon" href="./assets/app-icon/app-icon-new.png">
+
+<!-- Preload critical resources -->
+<link rel="preload" href="./assets/jumbo-gif/jumbo-wave-transparent.gif" as="image" type="image/gif">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json">
+
+<!-- ============================================ -->
+<!-- MODULE: Global Configuration & Logger        -->
+<!-- ============================================ -->
+<script>
+// 全局配置
+const CONFIG = {
+  isDevelopment: false,
+  version: 'v3.0-refactored',
+  buildDate: '2026-04-14',
+  audioPaths: {
+    hero: './assets/sounds/hero-sound.mp3',
+    bottom: './assets/sounds/bottom-sound.wav'
+  }
+};
+
+// 智能日志系统
+const logger = {
+  log: (...args) => CONFIG.isDevelopment && console.log('[INFO]', ...args),
+  warn: (...args) => CONFIG.isDevelopment && console.warn('[WARN]', ...args),
+  error: (...args) => CONFIG.isDevelopment && console.error('[ERROR]', ...args),
+  info: (...args) => CONFIG.isDevelopment && console.info('[INFO]', ...args)
+};
+</script>
+
+<style>
+/* ============================================ */
+/* MODULE: Base Styles & Variables              */
+/* ============================================ */
+:root {
+  --primary-purple: #7B2FBE;
+  --secondary-pink: #EC4899;
+  --text-dark: #1a1a1a;
+  --text-light: #ffffff;
+  --bg-light: rgba(255, 255, 255, 0.95);
+  --shadow-soft: 0 4px 15px rgba(123, 47, 190, 0.15);
+  --shadow-medium: 0 8px 30px rgba(123, 47, 190, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans TC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ============================================ */
+/* MODULE: Animations                           */
+/* ============================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes jumboFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes simpleFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================ */
+/* MODULE: Navigation                           */
+/* ============================================ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.nav-link:hover {
+  opacity: 0.8;
+}
+
+/* ============================================ */
+/* MODULE: Hero Section                         */
+/* ============================================ */
+.hero-section {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
+}
+
+.hero-content {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-text h1 {
+  font-size: clamp(32px, 5vw, 56px);
+  color: white;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.hero-text p {
+  font-size: clamp(16px, 2vw, 20px);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* ============================================ */
+/* MODULE: Jumbo Mascot & Speech Bubble         */
+/* ============================================ */
+.jumbo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.jumbo-mascot {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.jumbo-mascot img {
+  width: clamp(80px, 15vw, 180px);
+  height: auto;
+  filter: drop-shadow(0 10px 30px rgba(123, 47, 190, 0.4));
+  animation: jumboFloat 3s ease-in-out infinite;
+}
+
+/* 简化版 Speech Bubble - 稳定可靠 */
+.speech-bubble {
+  position: absolute;
+  top: -95px;
+  left: 50%;
+  margin-left: -100px;
+  pointer-events: auto;
+  opacity: 0;
+  animation: simpleFadeIn 0.5s ease-out 1s forwards;
+}
+
+.speech-bubble-content {
+  background: #fff;
+  border: 2px solid var(--primary-purple);
+  border-radius: 12px;
+  padding: 10px 16px;
+  min-width: 200px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.speech-bubble-greeting {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-purple);
+  margin-bottom: 4px;
+}
+
+.speech-bubble-message {
+  font-size: 12px;
+  color: var(--text-dark);
+  line-height: 1.5;
+  white-space: normal;
+}
+
+/* 箭头 - 指向下方 */
+.speech-bubble-arrow {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  margin-left: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--primary-purple);
+}
+
+/* ============================================ */
+/* MODULE: Responsive Design                    */
+/* ============================================ */
+@media (max-width: 768px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .speech-bubble {
+    top: auto;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    margin-left: -100px;
+  }
+  
+  /* 移动端箭头指向上方 */
+  .speech-bubble-arrow {
+    bottom: auto;
+    top: 100%;
+    border-top: none;
+    border-bottom: 8px solid var(--primary-purple);
+  }
+  
+  .nav-links {
+    display: none;
+  }
+}
+
+/* ============================================ */
+/* MODULE: Utility Classes                      */
+/* ============================================ */
+.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- MODULE: Navigation                           -->
+<!-- ============================================ -->
+<nav>
+  <div class="nav-brand">外遊象寶</div>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">功能特色</a>
+    <a href="#download" class="nav-link">下載 App</a>
+  </div>
+</nav>
+
+<!-- ============================================ -->
+<!-- MODULE: Hero Section                         -->
+<!-- ============================================ -->
+<section class="hero-section">
+  <div class="hero-content">
+    <!-- Left: Text Content -->
+    <div class="hero-text">
+      <h1 data-i18n="hero.title">旅行記賬<br>輕鬆分帳</h1>
+      <p data-i18n="hero.subtitle">OCR 即影即換算，智能多人分帳，即時匯率追蹤</p>
+    </div>
+    
+    <!-- Right: Jumbo Mascot with Speech Bubble -->
+    <div class="jumbo-container">
+      <div class="jumbo-mascot" id="heroJumboMascot">
+        <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif" alt="外遊象寶" loading="lazy">
+        
+        <!-- Simplified Speech Bubble -->
+        <div class="speech-bubble" id="heroSpeechBubble">
+          <div class="speech-bubble-content">
+            <div class="speech-bubble-greeting" data-i18n="hero.jumbo.greeting1">你好呀！</div>
+            <div class="speech-bubble-message" data-i18n="hero.jumbo.message1">我係外遊象寶，幫你輕鬆管理旅行開支！</div>
+            <div class="speech-bubble-arrow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- MODULE: JavaScript Application               -->
+<!-- ============================================ -->
+<script>
+// ============================================
+// MODULE: Audio System
+// ============================================
+class AudioSystem {
+  constructor() {
+    this.audioCache = new Map();
+  }
+  
+  /**
+   * 获取智能音频路径
+   */
+  getAudioPath(filename) {
+    const hostname = window.location.hostname;
+    
+    if (hostname.includes('github.io')) {
+      return `/FX-Travel-Jumbo-Interactive/assets/sounds/${filename}`;
+    } else if (hostname.includes('vercel.app') || hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `./assets/sounds/${filename}`;
+    } else {
+      return `./assets/sounds/${filename}`;
+    }
+  }
+  
+  /**
+   * 播放音效
+   */
+  playSound(soundType, volume = 1.0) {
+    try {
+      const filename = soundType === 'hero' ? CONFIG.audioPaths.hero.split('/').pop() : CONFIG.audioPaths.bottom.split('/').pop();
+      const audioPath = this.getAudioPath(filename);
+      
+      logger.log(`🔊 Playing ${soundType} sound from:`, audioPath);
+      logger.log('🔍 Current hostname:', window.location.hostname);
+      
+      // 创建新的 Audio 实例
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.preload = 'auto';
+      
+      // 错误处理
+      audio.addEventListener('error', (e) => {
+        logger.error(`❌ ${soundType} sound load error:`, e);
+        logger.error('Error code:', audio.error ? audio.error.code : 'unknown');
+      });
+      
+      // 播放
+      audio.play().catch(error => {
+        logger.warn(`⚠️ ${soundType} sound playback failed:`, error);
+      });
+      
+      return audio;
+    } catch (error) {
+      logger.error(`❌ ${soundType} sound error:`, error);
+      return null;
+    }
+  }
+}
+
+// ============================================
+// MODULE: Speech Bubble Manager
+// ============================================
+class SpeechBubbleManager {
+  constructor(bubbleElement) {
+    this.bubble = bubbleElement;
+    this.messages = [
+      { greeting: '你好呀！', message: '我係外遊象寶，幫你輕鬆管理旅行開支！' },
+      { greeting: '旅行開心啲！', message: '用我記賬，分帳超簡單～' },
+      { greeting: '匯率即時睇！', message: '唔使再計數計到頭痕啦！' }
+    ];
+    this.currentIndex = 0;
+    this.autoRotateTimer = null;
+  }
+  
+  /**
+   * 更新气泡文字（只更新textContent，不破坏DOM结构）
+   */
+  updateMessage(index) {
+    if (!this.bubble) return;
+    
+    const msg = this.messages[index];
+    const greetingDiv = this.bubble.querySelector('.speech-bubble-greeting');
+    const messageDiv = this.bubble.querySelector('.speech-bubble-message');
+    
+    if (greetingDiv && messageDiv) {
+      greetingDiv.innerHTML = msg.greeting;
+      messageDiv.innerHTML = msg.message;
+    }
+  }
+  
+  /**
+   * 切换到下一条消息
+   */
+  nextMessage() {
+    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+    this.updateMessage(this.currentIndex);
+  }
+  
+  /**
+   * 启动自动轮播
+   */
+  startAutoRotate(interval = 15000) {
+    if (this.autoRotateTimer) clearInterval(this.autoRotateTimer);
+    this.autoRotateTimer = setInterval(() => {
+      this.nextMessage();
+    }, interval);
+  }
+  
+  /**
+   * 停止自动轮播
+   */
+  stopAutoRotate() {
+    if (this.autoRotateTimer) {
+      clearInterval(this.autoRotateTimer);
+      this.autoRotateTimer = null;
+    }
+  }
+}
+
+// ============================================
+// MODULE: Jumbo Mascot Interactions
+// ============================================
+class JumboMascot {
+  constructor(element, audioSystem, bubbleManager) {
+    this.element = element;
+    this.audio = audioSystem;
+    this.bubble = bubbleManager;
+    this.lastPlayTime = 0;
+    
+    this.init();
+  }
+  
+  init() {
+    // 点击事件
+    this.element.addEventListener('click', () => {
+      this.handleClick();
+    });
+    
+    // 悬停事件（防抖）
+    this.element.addEventListener('mouseenter', () => {
+      this.handleMouseEnter();
+    });
+  }
+  
+  handleClick() {
+    // 播放音效
+    this.audio.playSound('bottom');
+    
+    // 切换气泡消息
+    if (this.bubble) {
+      this.bubble.nextMessage();
+    }
+    
+    // Jumbo 弹跳动画
+    this.element.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    this.element.style.transform = 'scale(1.05) rotate(5deg)';
+    
+    setTimeout(() => {
+      this.element.style.transform = 'scale(1) rotate(0deg)';
+    }, 300);
+  }
+  
+  handleMouseEnter() {
+    const now = Date.now();
+    if (now - this.lastPlayTime > 5000) {
+      this.lastPlayTime = now;
+      this.audio.playSound('bottom', 0.5); // 较低音量
+    }
+  }
+}
+
+// ============================================
+// MODULE: Application Initialization
+// ============================================
+class App {
+  constructor() {
+    this.audioSystem = new AudioSystem();
+    this.init();
+  }
+  
+  init() {
+    logger.log('🚀 App initializing...');
+    logger.log('📦 Version:', CONFIG.version);
+    logger.log('📅 Build:', CONFIG.buildDate);
+    
+    // 初始化 Speech Bubble
+    const bubbleElement = document.getElementById('heroSpeechBubble');
+    const bubbleManager = new SpeechBubbleManager(bubbleElement);
+    
+    // 初始化 Jumbo Mascot
+    const jumboElement = document.getElementById('heroJumboMascot');
+    const jumbo = new JumboMascot(jumboElement, this.audioSystem, bubbleManager);
+    
+    // 启动自动轮播
+    bubbleManager.startAutoRotate(15000);
+    
+    logger.log('✅ App initialized successfully');
+  }
+}
+
+// 页面加载完成后启动应用
+document.addEventListener('DOMContentLoaded', () => {
+  window.app = new App();
+});
+</script>
+
+</body>
+</html>

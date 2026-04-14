@@ -1,0 +1,26 @@
+{
+  "name": "外遊象寶 FX Travel Jumbo",
+  "short_name": "FX Travel Jumbo",
+  "description": "OCR即影即換算、智能多人分帳、即時匯率追蹤，一App搞掂所有旅行財務",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#7B2FBE",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/assets/app-icon-new.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/app-icon-new.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["finance", "travel", "utilities"],
+  "lang": "zh-Hant",
+  "dir": "ltr"
+}

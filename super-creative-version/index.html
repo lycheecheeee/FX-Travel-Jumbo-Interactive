@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<title>[V2]外遊象寶 FX Travel Jumbo - 旅行記賬分帳 · 即時匯率換算</title>
+<meta name="description" content="FX Travel Jumbo 外遊象寶 - OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta name="theme-color" content="#7B2FBE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fxtraveljumbo.com/">
+<meta property="og:title" content="外遊象寶 FX Travel Jumbo — 旅行記賬分帳 · 即時匯率換算">
+<meta property="og:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta property="og:image" content="./assets/app-icon/app-icon-new.png">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://fxtraveljumbo.com/">
+<meta property="twitter:title" content="外遊象寶 FX Travel Jumbo">
+<meta property="twitter:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤">
+<meta property="twitter:image" content="./assets/app-icon/app-icon-new.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="./assets/app-icon/app-icon-new.png">
+<link rel="apple-touch-icon" href="./assets/app-icon/app-icon-new.png">
+
+<!-- Preconnect only (remove heavy preload) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json">
+
+<script>
+const CONFIG = {
+  isDevelopment: true,
+  version: 'v3.0-super-creative',
+  buildDate: '2026-04-14'
+};
+
+const logger = {
+  log: (...args) => CONFIG.isDevelopment && console.log('[INFO]', ...args),
+  warn: (...args) => CONFIG.isDevelopment && console.warn('[WARN]', ...args),
+  error: (...args) => CONFIG.isDevelopment && console.error('[ERROR]', ...args)
+};
+
+// Custom Cursor System
+class CustomCursor {
+  constructor() {
+    this.cursor = document.createElement('div');
+    this.cursor.className = 'custom-cursor';
+    this.dot = document.createElement('div');
+    this.dot.className = 'cursor-dot';
+    document.body.appendChild(this.cursor);
+    document.body.appendChild(this.dot);
+    
+    this.posX = 0;
+    this.posY = 0;
+    this.cursorX = 0;
+    this.cursorY = 0;
+    
+    this.init();
+  }
+  
+  init() {
+    document.addEventListener('mousemove', (e) => {
+      this.posX = e.clientX;
+      this.posY = e.clientY;
+      this.dot.style.left = this.posX + 'px';
+      this.dot.style.top = this.posY + 'px';
+    });
+    
+    // Smooth cursor follow
+    this.animate();
+    
+    // Hover effects
+    const interactiveElements = document.querySelectorAll('a, button, .feature-card, .currency-item, .jumbo-mascot, .download-btn');
+    interactiveElements.forEach(el => {
+      el.addEventListener('mouseenter', () => this.cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => this.cursor.classList.remove('hover'));
+    });
+  }
+  
+  animate() {
+    this.cursorX += (this.posX - this.cursorX) * 0.15;
+    this.cursorY += (this.posY - this.cursorY) * 0.15;
+    this.cursor.style.left = this.cursorX + 'px';
+    this.cursor.style.top = this.cursorY + 'px';
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Scroll Progress Bar
+class ScrollProgress {
+  constructor() {
+    this.progressBar = document.createElement('div');
+    this.progressBar.className = 'scroll-progress';
+    document.body.appendChild(this.progressBar);
+    this.init();
+  }
+  
+  init() {
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      this.progressBar.style.width = scrolled + '%';
+    });
+  }
+}
+
+// Parallax Effect
+class ParallaxEffect {
+  constructor() {
+    this.elements = document.querySelectorAll('.feature-card, .currency-item');
+    this.init();
+  }
+  
+  init() {
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      this.elements.forEach((el, index) => {
+        const speed = 0.5 + (index % 3) * 0.1;
+        const yPos = -(scrolled * speed * 0.05);
+        el.style.transform = `translateY(${yPos}px)`;
+      });
+    });
+  }
+}
+
+// Particle System for Hero
+class ParticleSystem {
+  constructor() {
+    this.particles = [];
+    this.canvas = null;
+    this.ctx = null;
+    this.init();
+  }
+  
+  init() {
+    // Create canvas overlay
+    this.canvas = document.createElement('canvas');
+    this.canvas.style.position = 'absolute';
+    this.canvas.style.top = '0';
+    this.canvas.style.left = '0';
+    this.canvas.style.width = '100%';
+    this.canvas.style.height = '100%';
+    this.canvas.style.pointerEvents = 'none';
+    this.canvas.style.zIndex = '1';
+    
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+      heroSection.appendChild(this.canvas);
+      this.ctx = this.canvas.getContext('2d');
+      this.resize();
+      this.createParticles();
+      this.animate();
+      
+      window.addEventListener('resize', () => this.resize());
+    }
+  }
+  
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+  
+  createParticles() {
+    for (let i = 0; i < 50; i++) {
+      this.particles.push({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 3 + 1,
+        speedX: Math.random() * 2 - 1,
+        speedY: Math.random() * 2 - 1,
+        opacity: Math.random() * 0.5 + 0.2
+      });
+    }
+  }
+  
+  animate() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    this.particles.forEach(particle => {
+      particle.x += particle.speedX;
+      particle.y += particle.speedY;
+      
+      if (particle.x < 0 || particle.x > this.canvas.width) particle.speedX *= -1;
+      if (particle.y < 0 || particle.y > this.canvas.height) particle.speedY *= -1;
+      
+      this.ctx.beginPath();
+      this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+      this.ctx.fillStyle = `rgba(123, 47, 190, ${particle.opacity})`;
+      this.ctx.fill();
+    });
+    
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+// Ripple Effect on Click
+class RippleEffect {
+  constructor() {
+    this.init();
+  }
+  
+  init() {
+    document.addEventListener('click', (e) => {
+      const ripple = document.createElement('div');
+      ripple.style.position = 'fixed';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.background = 'rgba(123, 47, 190, 0.6)';
+      ripple.style.borderRadius = '50%';
+      ripple.style.transform = 'translate(-50%, -50%)';
+      ripple.style.pointerEvents = 'none';
+      ripple.style.animation = 'ripple 0.6s ease-out';
+      ripple.style.zIndex = '9998';
+      
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  }
+}
+
+// Intersection Observer for Animations
+class ScrollAnimations {
+  constructor() {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            entry.target.classList.add('animated');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+    
+    this.init();
+  }
+  
+  init() {
+    // Observe elements with animate-on-scroll class
+    const animatedElements = document.querySelectorAll('.animate-on-scroll, .feature-card, .currency-item, .faq-item');
+    animatedElements.forEach((el, index) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(50px)';
+      el.style.transition = `all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) ${index * 0.05}s`;
+      this.observer.observe(el);
+    });
+  }
+}
+</script>
+
+<style>
+:root {
+  --primary-purple: #7B2FBE;
+  --secondary-pink: #EC4899;
+  --accent-cyan: #06b6d4;
+  --accent-yellow: #fbbf24;
+  --text-dark: #1a1a1a;
+  --text-light: #ffffff;
+  --bg-light: rgba(255, 255, 255, 0.95);
+  --shadow-soft: 0 4px 15px rgba(123, 47, 190, 0.15);
+  --shadow-medium: 0 8px 30px rgba(123, 47, 190, 0.2);
+  --shadow-glow: 0 0 40px rgba(123, 47, 190, 0.6);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans TC', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+  color: white;
+  cursor: none;
+  /* Performance optimization */
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 5000px;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--secondary-pink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, background 0.15s ease;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor.hover {
+  transform: scale(2);
+  background: rgba(236, 72, 153, 0.3);
+}
+
+.cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: var(--secondary-pink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* Volume Button Styles */
+#volumeToggle {
+  box-shadow: 0 4px 20px rgba(123, 47, 190, 0.3);
+}
+
+#volumeToggle:hover {
+  background: rgba(123, 47, 190, 0.3);
+  border-color: rgba(123, 47, 190, 0.6);
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 8px 30px rgba(123, 47, 190, 0.5);
+}
+
+#volumeToggle:active {
+  transform: scale(0.95);
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes jumboFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(3deg); } }
+@keyframes simpleFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes videoFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(123, 47, 190, 0.4); } 50% { box-shadow: 0 0 40px rgba(123, 47, 190, 0.8); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-5deg); } 75% { transform: translateX(5px) rotate(5deg); } }
+
+/* 🎉 Crazy Click Effects */
+@keyframes crazyShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  10% { transform: translateX(-10px) rotate(-10deg); }
+  20% { transform: translateX(10px) rotate(10deg); }
+  30% { transform: translateX(-10px) rotate(-10deg); }
+  40% { transform: translateX(10px) rotate(10deg); }
+  50% { transform: translateX(-8px) rotate(-8deg); }
+  60% { transform: translateX(8px) rotate(8deg); }
+  70% { transform: translateX(-5px) rotate(-5deg); }
+  80% { transform: translateX(5px) rotate(5deg); }
+  90% { transform: translateX(-2px) rotate(-2deg); }
+}
+
+@keyframes particleFly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0);
+  }
+}
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes slide-in-left { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slide-in-right { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes ripple { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
+@keyframes textShakeEnergy { 0%, 100% { transform: translateX(0); } 5% { transform: translateX(-2px) rotate(-1deg); } 10% { transform: translateX(2px) rotate(1deg); } 15% { transform: translateX(0); } }
+@keyframes flyAround { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(100px, -50px) rotate(90deg); } 50% { transform: translate(0, -100px) rotate(180deg); } 75% { transform: translate(-100px, -50px) rotate(270deg); } 100% { transform: translate(0, 0) rotate(360deg); } }
+@keyframes routeDash { to { stroke-dashoffset: -100; } }
+@keyframes globeRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes planeFly { 0% { transform: translateX(-100vw) translateY(0); } 50% { transform: translateX(0) translateY(-30px); } 100% { transform: translateX(100vw) translateY(0); } }
+@keyframes planeFlyReverse { 0% { transform: translateX(100vw) translateY(0); } 50% { transform: translateX(0) translateY(-25px); } 100% { transform: translateX(-100vw) translateY(0); } }
+
+/* Scroll Progress Bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-purple), var(--secondary-pink), var(--accent-cyan));
+  z-index: 10001;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px rgba(123, 47, 190, 0.8);
+}
+
+/* Navigation */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(10, 10, 15, 0.6); backdrop-filter: blur(15px);
+  padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  will-change: background, backdrop-filter;
+  contain: layout style paint;
+}
+
+nav.scrolled {
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Add padding to body to prevent content from being hidden under nav */
+body {
+  padding-top: 60px;
+}
+
+.nav-brand { 
+  font-size: 20px; font-weight: 700; color: white;
+  background: linear-gradient(135deg, #fff, var(--secondary-pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.nav-links { display: flex; gap: 16px; align-items: center; flex-wrap: nowrap; }
+.nav-link {
+  color: rgba(255, 255, 255, 0.8); text-decoration: none; font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+/* Custom Tooltip */
+.nav-link .tooltip {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.nav-link .tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgba(10, 10, 15, 0.95);
+}
+
+.nav-link:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #EC4899, #7B2FBE);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.nav-link:hover::after {
+  width: 70%;
+}
+
+.nav-link:hover {
+  color: white;
+  background: rgba(123, 47, 190, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Download Button Hover Effect */
+.nav-link[href="#download"]::after {
+  display: none;
+}
+
+.nav-link[href="#download"]:hover {
+  box-shadow: 0 6px 20px rgba(236,72,153,0.5);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.nav-link[href="#download"]:hover > div {
+  opacity: 1;
+}
+
+/* Active Nav Link State */
+.nav-link.active {
+  color: white;
+  background: rgba(123, 47, 190, 0.2);
+}
+
+.nav-link.active::after {
+  width: 70%;
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 50vh; max-height: 75vh; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; 
+  background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+  padding: 50px 0 20px;
+}
+
+/* Animated Grid Background */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(123, 47, 190, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(123, 47, 190, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+.hero-content {
+  max-width: 1200px; width: 100%; padding: 80px 20px 40px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+}
+
+.hero-text h1 {
+  font-size: clamp(32px, 5vw, 56px); color: white;
+  margin-bottom: 20px; line-height: 1.2;
+  animation: slide-in-left 1s ease-out;
+  text-shadow: 0 0 30px rgba(123, 47, 190, 0.5);
+}
+
+.hero-text p {
+  font-size: clamp(16px, 2vw, 20px); color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 30px; line-height: 1.6;
+  animation: slide-in-left 1s ease-out 0.2s backwards;
+}
+
+.jumbo-container { 
+  position: relative; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  animation: float 3s ease-in-out infinite;
+}
+
+.jumbo-mascot { 
+  cursor: pointer; 
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+.jumbo-mascot::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(123, 47, 190, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.jumbo-mascot:hover::before {
+  opacity: 1;
+}
+
+.jumbo-mascot img {
+  width: clamp(80px, 15vw, 180px); height: auto;
+  filter: drop-shadow(0 10px 30px rgba(123, 47, 190, 0.4));
+  animation: jumboFloat 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.jumbo-mascot:hover img {
+  transform: scale(1.1) rotate(10deg);
+  filter: drop-shadow(0 20px 50px rgba(123, 47, 190, 0.8));
+}
+
+.jumbo-mascot:active img {
+  animation: shake 0.5s ease;
+}
+
+.speech-bubble {
+  position: absolute; top: -95px; left: 50%; margin-left: -100px;
+  pointer-events: auto; opacity: 0; animation: simpleFadeIn 0.5s ease-out 1s forwards;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.speech-bubble:hover {
+  transform: scale(1.1) rotate(-2deg);
+}
+
+.speech-bubble-content {
+  background: #fff; border: 2px solid var(--primary-purple);
+  border-radius: 12px; padding: 10px 16px; min-width: 200px;
+  text-align: center; box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.speech-bubble-content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(123, 47, 190, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.speech-bubble-greeting {
+  font-size: 14px; font-weight: 700; color: var(--primary-purple); margin-bottom: 4px;
+}
+
+.speech-bubble-message {
+  font-size: 12px; color: var(--text-dark); line-height: 1.5;
+  white-space: normal;
+}
+
+.speech-bubble-arrow {
+  position: absolute; bottom: -8px; left: 50%; margin-left: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid transparent; border-right: 8px solid transparent;
+  border-top: 8px solid var(--primary-purple);
+}
+
+#heroVideo {
+  position: relative; z-index: 2; max-width: min(80vw, 1000px);
+  width: auto; height: auto; max-height: 60vh; border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 100px rgba(123,47,190,0.2);
+  animation: videoFadeIn 1.5s ease-out, glow 3s ease-in-out infinite;
+  background: transparent; object-fit: contain;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+#heroVideo:hover {
+  transform: scale(1.02);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 120px rgba(123,47,190,0.4);
+}
+
+/* Sections */
+.feature-section {
+  position: relative; padding: clamp(80px, 12vh, 120px) 20px;
+  overflow: hidden;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 80px); }
+
+.section-header { text-align: center; margin-bottom: clamp(60px, 8vw, 80px); }
+.section-subtitle {
+  font-size: clamp(12px, 1.5vw, 14px); color: var(--secondary-pink);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(32px, 5vw, 48px); font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, #f0abfc 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 16px;
+}
+.section-desc {
+  font-size: clamp(15px, 2.5vw, 18px); color: rgba(255,255,255,0.7);
+  max-width: 600px; margin: 0 auto;
+}
+
+/* Feature Cards */
+.feature-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: clamp(40px, 6vw, 80px); align-items: center;
+}
+
+.feature-card {
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+  border: 1px solid rgba(123,47,190,0.2); border-radius: 20px;
+  padding: clamp(24px, 4vw, 32px); 
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(123, 47, 190, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.feature-card:hover::before {
+  left: 100%;
+}
+
+.feature-card:hover {
+  border-color: rgba(123,47,190,0.8); 
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 30px 80px rgba(123,47,190,0.5), 0 0 40px rgba(236,72,153,0.3);
+}
+
+.feature-card:active {
+  transform: translateY(-8px) scale(0.98);
+}
+
+/* Currency Grid */
+.currency-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px; margin-top: 40px;
+}
+
+.currency-item {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(123,47,190,0.2);
+  border-radius: 12px; padding: 16px; text-align: center;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.currency-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(123, 47, 190, 0.4) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.currency-item:hover {
+  background: rgba(123,47,190,0.3); 
+  transform: translateY(-8px) scale(1.1) rotate(5deg);
+  border-color: var(--secondary-pink);
+  box-shadow: 0 15px 40px rgba(123,47,190,0.5);
+}
+
+.currency-item:hover::after {
+  opacity: 1;
+}
+
+.currency-flag { font-size: 32px; margin-bottom: 8px; transition: transform 0.3s ease; }
+.currency-item:hover .currency-flag { transform: scale(1.3) rotate(360deg); }
+.currency-code { font-weight: 700; font-size: 14px; }
+
+/* FAQ */
+.faq-item {
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+  border: 1px solid rgba(123,47,190,0.2); border-radius: 16px;
+  margin-bottom: 16px; overflow: hidden; transition: all 0.3s ease;
+}
+
+.faq-item:hover { border-color: rgba(123,47,190,0.5); }
+
+.faq-question {
+  padding: clamp(20px, 3vw, 24px); font-weight: 700;
+  font-size: clamp(15px, 2.5vw, 17px); cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.faq-answer {
+  padding: 0 clamp(20px, 3vw, 24px) clamp(20px, 3vw, 24px);
+  font-size: clamp(13px, 2vw, 15px); color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+}
+
+/* Download CTA */
+.download-section {
+  text-align: center; padding: clamp(80px, 12vh, 120px) 20px;
+  background: linear-gradient(135deg, rgba(123,47,190,0.3) 0%, rgba(236,72,153,0.2) 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.download-section::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(123, 47, 190, 0.2) 0%, transparent 70%);
+  animation: spin-slow 20s linear infinite;
+}
+
+.download-buttons {
+  display: flex; gap: 20px; justify-content: center;
+  flex-wrap: wrap; margin-top: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.download-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white; padding: 16px 32px;
+  border-radius: 16px; text-decoration: none; font-weight: 700;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.download-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(123, 47, 190, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.download-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(123, 47, 190, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.download-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.download-btn:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 20px 60px rgba(123,47,190,0.6);
+}
+
+.download-btn:active {
+  transform: translateY(-4px) scale(0.98);
+}
+
+/* Footer */
+footer {
+  background: rgba(0,0,0,0.3); padding: 40px 20px;
+  text-align: center; color: rgba(255,255,255,0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content { grid-template-columns: 1fr; text-align: center; }
+  .speech-bubble { 
+    top: auto; 
+    bottom: calc(100% + 8px); 
+    left: 50%; 
+    margin-left: -100px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  .speech-bubble-arrow { 
+    bottom: auto; 
+    top: 100%; 
+    border-top: none; 
+    border-bottom: 8px solid var(--primary-purple);
+  }
+  
+  /* Mobile Navigation */
+  #mobileMenuToggle {
+    display: block !important;
+  }
+  
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(10,10,15,0.98);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    padding: 20px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+  
+  .nav-links.active {
+    display: flex !important;
+  }
+  
+  .nav-link {
+    padding: 14px 16px;
+    text-align: center;
+    width: 100%;
+  }
+  
+  nav {
+    position: relative;
+  }
+  .feature-grid { grid-template-columns: 1fr; }
+  
+  /* Mobile optimizations */
+  .custom-cursor, .cursor-dot { display: none; }
+  body { cursor: auto; }
+  
+  .jumbo-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+  
+  .jumbo-mascot img {
+    width: 80px;
+  }
+  
+  .currency-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+  
+  .download-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .download-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  /* Other Features mobile optimization */
+  #otherFeatures .feature-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  #otherFeatures .feature-card[style*="grid-column:span 2"] {
+    grid-column: span 1 !important;
+  }
+}
+
+/* Desktop - Show connecting line */
+@media (min-width: 1025px) {
+  .desktop-line {
+    display: block !important;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Large screens */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .hero-text h1 {
+    font-size: 64px;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Lightweight Loading Indicator -->
+<div id="loadingIndicator" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1a0b2e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease;">
+  <div style="width:60px;height:60px;border:4px solid rgba(123,47,190,0.3);border-top-color:#EC4899;border-radius:50%;animation:spin 1s linear infinite;"></div>
+  <p style="color:white;margin-top:20px;font-size:16px;animation:pulse 1.5s ease-in-out infinite;">加載中...</p>
+</div>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<nav id="mainNav" style="position:fixed !important;top:0 !important;left:0 !important;right:0 !important;z-index:99998 !important;background:rgba(10,10,15,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.1);padding:12px 24px;transition:all 0.3s ease;box-shadow:0 2px 20px rgba(0,0,0,0.3);will-change:background,backdrop-filter,box-shadow;">
+  <!-- Animated Flight Route Background -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.15;overflow:hidden;">
+    <svg style="width:100%;height:100%;" viewBox="0 0 1920 60" preserveAspectRatio="none">
+      <path d="M0,30 Q480,10 960,30 T1920,30" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-dasharray="6,3" style="animation:routeDash 15s linear infinite;"/>
+    </svg>
+  </div>
+  
+  <div class="nav-brand" data-i18n="brand.name" style="position:relative;z-index:1;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform 0.3s ease;" onmouseenter="this.style.transform='scale(1.1) rotate(-5deg)'" onmouseleave="this.style.transform='scale(1) rotate(0deg)'">
+    <span style="font-size:24px;animation:bounce 1.5s ease-in-out infinite;display:inline-block;">🐘</span>
+    <span style="background:linear-gradient(135deg,#fff,#f0abfc,#EC4899);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient-shift 3s ease infinite;">外遊象寶</span>
+  </div>
+  
+  <div class="nav-links" style="position:relative;z-index:1;">
+    <a href="#appIntro" class="nav-link" data-i18n="nav.about" style="position:relative;transition:all 0.3s ease;">
+      關於
+      <span class="tooltip">Let's explore! 🚀</span>
+    </a>
+    <a href="#coreFeatures" class="nav-link" data-i18n="nav.features" style="position:relative;transition:all 0.3s ease;">
+      核心功能
+      <span class="tooltip">Check this out! ✨</span>
+    </a>
+    <a href="#otherFeatures" class="nav-link" data-i18n="nav.otherFeatures" style="position:relative;transition:all 0.3s ease;">
+      更多功能
+      <span class="tooltip">More cool stuff! 🎯</span>
+    </a>
+    <a href="#currencies" class="nav-link" data-i18n="nav.currencies" style="position:relative;transition:all 0.3s ease;">
+      支援貨幣
+      <span class="tooltip">Global vibes! 🌍</span>
+    </a>
+    <a href="#howToUse" class="nav-link" data-i18n="nav.tutorial" style="position:relative;transition:all 0.3s ease;">
+      使用教學
+      <span class="tooltip">Super easy! 💡</span>
+    </a>
+    <a href="#faq" class="nav-link" data-i18n="nav.faq" style="position:relative;transition:all 0.3s ease;">
+      常見問題
+      <span class="tooltip">Got questions? 🤔</span>
+    </a>
+    
+    <!-- Download Button - Enhanced with Fun Effect -->
+    <a href="#download" class="nav-link" data-i18n="nav.download" style="position:relative;background:linear-gradient(135deg,#EC4899,#7B2FBE);padding:10px 20px;border-radius:10px;color:white;font-weight:700;box-shadow:0 4px 15px rgba(236,72,153,0.3);transition:all 0.3s ease;overflow:hidden;">
+      <span style="position:relative;z-index:1;">免費下載</span>
+      <span class="tooltip">Let's go! 🎉</span>
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#f472b6,#9333ea);opacity:0;transition:opacity 0.3s ease;"></div>
+    </a>
+    
+    <!-- Language Selector with Enhanced Globe Animation -->
+    <div style="position:relative;display:inline-block;margin-left:12px;">
+      <!-- Language Toggle (Hidden - using fixed version instead) -->
+      <button id="langToggle" style="display:none;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:8px 14px;color:white;cursor:pointer;display:none;align-items:center;gap:8px;font-size:14px;transition:all 0.3s ease;position:relative;overflow:hidden;">
+        <svg id="globeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.5s ease;">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span id="currentLang">繁體中文</span>
+        <span style="font-size:10px;opacity:0.6;">▼</span>
+      </button>
+      <div id="langDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:rgba(10,10,15,0.98);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:6px;min-width:160px;z-index:1000;box-shadow:0 15px 40px rgba(0,0,0,0.6);animation:fadeIn 0.2s ease-out;">
+        <div class="lang-option" data-lang="zh-TW" style="padding:10px 14px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇭🇰 繁體中文</div>
+        <div class="lang-option" data-lang="zh-CN" style="padding:10px 14px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇨🇳 简体中文</div>
+        <div class="lang-option" data-lang="en" style="padding:10px 14px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇺🇸 English</div>
+        <div class="lang-option" data-lang="ja" style="padding:10px 14px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇯🇵 日本語</div>
+        <div class="lang-option" data-lang="ko" style="padding:10px 14px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇰🇷 한국어</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu Toggle with Animation -->
+  <button id="mobileMenuToggle" style="display:none;background:none;border:none;color:white;font-size:26px;cursor:pointer;padding:8px;transition:transform 0.3s ease;z-index:1001;">☰</button>
+</nav>
+
+<section class="hero-section">
+  <video id="heroVideo" loop playsinline autoplay preload="metadata" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%231a0b2e' width='1920' height='1080'/%3E%3C/svg%3E">
+    <source src="/assets/Section%201_Hero%20video/0_hero-video.mp4" type="video/mp4">
+  </video>
+  
+  <!-- World Travel Background Elements -->
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;">
+    <!-- Animated Flight Routes -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.15;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <!-- Route 1 -->
+      <path d="M200,400 Q600,200 1000,500 T1700,300" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 20s linear infinite;"/>
+      <!-- Route 2 -->
+      <path d="M100,700 Q500,500 900,800 T1600,600" fill="none" stroke="#7B2FBE" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 25s linear infinite reverse;"/>
+      <!-- Route 3 -->
+      <path d="M300,200 Q700,400 1100,200 T1800,500" fill="none" stroke="#06B6D4" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 30s linear infinite;"/>
+    </svg>
+    
+    <!-- Flying Planes -->
+    <div style="position:absolute;top:30%;left:0;font-size:24px;animation:planeFly 15s linear infinite;filter:drop-shadow(0 0 10px rgba(236,72,153,0.5));">✈️</div>
+    <div style="position:absolute;top:60%;left:0;font-size:20px;animation:planeFly 20s linear infinite 5s;filter:drop-shadow(0 0 10px rgba(123,47,190,0.5));">✈️</div>
+    
+    <!-- Globe Icon -->
+    <div style="position:absolute;bottom:15%;left:5%;width:120px;height:120px;opacity:0.08;animation:globeRotate 60s linear infinite;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.5">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    
+    <!-- Location Pins -->
+    <div style="position:absolute;top:25%;right:15%;font-size:28px;animation:bounce 3s ease-in-out infinite;opacity:0.3;">📍</div>
+    <div style="position:absolute;top:65%;right:25%;font-size:24px;animation:bounce 4s ease-in-out infinite 1s;opacity:0.3;">📍</div>
+    <div style="position:absolute;top:45%;left:20%;font-size:26px;animation:bounce 3.5s ease-in-out infinite 0.5s;opacity:0.3;">📍</div>
+  </div>
+</section>
+
+<!-- App Intro Section - World Travel Theme -->
+<section class="feature-section" id="appIntro" style="background:var(--dark);position:relative;overflow:hidden;">
+  <!-- World Map Background Pattern -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.06;">
+    <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+      <!-- Simplified World Map Outline -->
+      <path d="M200,300 Q400,250 600,350 T1000,300 T1400,350 T1700,300" fill="none" stroke="white" stroke-width="2"/>
+      <path d="M150,500 Q350,450 550,550 T950,500 T1350,550 T1650,500" fill="none" stroke="white" stroke-width="2"/>
+      <path d="M180,700 Q380,650 580,750 T980,700 T1380,750 T1680,700" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+  
+  <!-- Animated Flight Routes -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.12;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <path d="M100,400 Q500,200 900,500 T1700,350" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 22s linear infinite;"/>
+      <path d="M150,600 Q550,400 950,700 T1650,550" fill="none" stroke="#7B2FBE" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 28s linear infinite reverse;"/>
+      <path d="M200,300 Q600,500 1000,300 T1800,600" fill="none" stroke="#06B6D4" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 25s linear infinite;"/>
+    </svg>
+    
+    <!-- Flying Planes -->
+    <div style="position:absolute;top:35%;left:-50px;font-size:22px;animation:planeFly 18s linear infinite;filter:drop-shadow(0 0 8px rgba(236,72,153,0.6));">✈️</div>
+    <div style="position:absolute;top:55%;left:-50px;font-size:18px;animation:planeFly 24s linear infinite 6s;filter:drop-shadow(0 0 8px rgba(123,47,190,0.6));">✈️</div>
+  </div>
+  
+  <!-- Floating Location Pins -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <div style="position:absolute;top:15%;right:12%;font-size:32px;animation:bounce 3.5s ease-in-out infinite;opacity:0.25;">📍</div>
+    <div style="position:absolute;top:70%;left:8%;font-size:28px;animation:bounce 4s ease-in-out infinite 1.2s;opacity:0.25;">📍</div>
+    <div style="position:absolute;top:40%;left:15%;font-size:30px;animation:bounce 3.8s ease-in-out infinite 0.7s;opacity:0.25;">📍</div>
+    <div style="position:absolute;bottom:20%;right:18%;font-size:26px;animation:bounce 4.2s ease-in-out infinite 2s;opacity:0.25;">📍</div>
+  </div>
+  
+  <!-- Crazy Animated Background -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <div style="position:absolute;top:10%;left:5%;width:300px;height:300px;background:radial-gradient(circle,rgba(123,47,190,0.2) 0%,transparent 70%);animation:float 8s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:10%;right:5%;width:400px;height:400px;background:radial-gradient(circle,rgba(236,72,153,0.15) 0%,transparent 70%);animation:float 10s ease-in-out infinite 2s;"></div>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(6,182,212,0.1) 0%,transparent 70%);animation:pulse 6s ease-in-out infinite;"></div>
+  </div>
+  
+  <div class="container" style="max-width:1000px;margin:0 auto;text-align:center;position:relative;z-index:1;">
+    <!-- App Icon - Crazy Animation -->
+    <div style="margin-bottom:40px;" class="animate-on-scroll">
+       <a href="https://apps.apple.com/app/fx-travel-jumbo" target="_blank" rel="noopener noreferrer" style="display:inline-block;cursor:pointer;transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);" onmouseenter="this.style.transform='scale(1.15) rotate(10deg)'" onmouseleave="this.style.transform='scale(1) rotate(0deg)'" title="點擊前往 App Store">
+         <img src="./assets/app-icon/app-icon-new.png" alt="外遊象寶" loading="lazy" style="width:clamp(120px,18vw,160px);height:auto;border-radius:32px;box-shadow:0 20px 60px rgba(123,47,190,0.5),0 0 100px rgba(123,47,190,0.3);pointer-events:none;animation:float 4s ease-in-out infinite;">
+       </a>
+    </div>
+    
+    <!-- Title & Subtitle -->
+    <h1 class="animate-on-scroll" style="font-size:clamp(36px,6vw,64px);font-weight:900;margin-bottom:24px;color:white;line-height:1.2;text-shadow:0 0 40px rgba(123,47,190,0.6);animation:gradient-shift 5s ease infinite;background:linear-gradient(135deg,#fff 0%,#f0abfc 50%,#EC4899 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">FX Travel Jumbo<br>外遊象寶</h1>
+    <p class="animate-on-scroll" style="font-size:clamp(17px,2.8vw,21px);color:rgba(255,255,255,0.8);line-height:1.8;max-width:700px;margin:0 auto;">旅行財務管理的全新體驗——OCR即影即換算、智能多人分帳、即時滙率追蹤,一App搞掂所有旅行財務。</p>
+    
+    <!-- Screenshot Demo - iPhone 3D Style with Crazy Effects -->
+    <div class="animate-on-scroll" style="margin-top:clamp(50px,8vh,100px);display:flex;justify-content:center;perspective:1500px;">
+      <div style="position:relative;width:min(85vw,400px);aspect-ratio:9/19.5;transform:perspective(1000px) rotateY(-12deg) rotateX(5deg);transform-style:preserve-3d;transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);" onmouseenter="this.style.transform='perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.05)'" onmouseleave="this.style.transform='perspective(1000px) rotateY(-12deg) rotateX(5deg) scale(1)'">
+        <!-- Phone Shadow - Enhanced -->
+        <div style="position:absolute;top:30px;left:20px;right:-20px;bottom:-30px;background:rgba(123,47,190,0.3);filter:blur(40px);border-radius:50px;animation:pulse 3s ease-in-out infinite;"></div>
+        
+        <!-- Phone Frame - Premium -->
+        <div style="position:relative;width:100%;height:100%;background:linear-gradient(145deg,#f5f5f7 0%,#e0e0e5 30%,#d2d2d7 60%,#c7c7cc 100%);border-radius:48px;box-shadow:0 50px 100px rgba(0,0,0,0.4),0 0 0 2px rgba(255,255,255,0.4) inset,0 0 0 3px rgba(0,0,0,0.15) inset,0 0 60px rgba(123,47,190,0.3);padding:14px;overflow:hidden;">
+          <!-- Screen -->
+          <div style="position:relative;width:100%;height:100%;background:#0a0a0f;border-radius:38px;overflow:hidden;">
+            <!-- Notch -->
+            <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);width:130px;height:36px;background:linear-gradient(180deg,#1a1a1a 0%,#0a0a0a 100%);border-radius:24px;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,0.5);"></div>
+            <!-- Video Content -->
+            <video autoplay loop playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;">
+              <source src="./assets/Calculator.MP4" type="video/mp4">
+            </video>
+            <!-- Screen Glow Effect -->
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(123,47,190,0.1) 0%,transparent 50%,rgba(236,72,153,0.1) 100%);pointer-events:none;"></div>
+          </div>
+        </div>
+        
+        <!-- Floating SVG Elements Around Phone -->
+        <div style="position:absolute;top:-20px;right:-30px;width:60px;height:60px;animation:bounce 2s ease-in-out infinite;filter:drop-shadow(0 10px 20px rgba(123,47,190,0.4));">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <circle cx="12" cy="12" r="2"/>
+            <path d="M6 12h.01M18 12h.01"/>
+          </svg>
+        </div>
+        <div style="position:absolute;bottom:40px;left:-40px;width:50px;height:50px;animation:bounce 2.5s ease-in-out infinite 0.5s;filter:drop-shadow(0 10px 20px rgba(123,47,190,0.4));">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7B2FBE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.7l-1.2 4 6 3.2-2 2-4-1.5L1 16l7.4 1.6c.7.1 1.4-.1 1.9-.5l4.1-4.1 3.4 6.2c.5.9 1.5.5 1.5.5z"/>
+          </svg>
+        </div>
+        <div style="position:absolute;top:40%;right:-50px;width:45px;height:45px;animation:bounce 3s ease-in-out infinite 1s;filter:drop-shadow(0 10px 20px rgba(123,47,190,0.4));">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="coreFeatures" style="position:relative;overflow:hidden;">
+  <!-- World Travel Background Elements -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <!-- Flight Routes -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.06;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <path d="M50,400 Q450,200 850,500 T1750,350" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 35s linear infinite;"/>
+      <path d="M100,600 Q500,400 900,700 T1700,550" fill="none" stroke="#7B2FBE" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 40s linear infinite reverse;"/>
+    </svg>
+    
+    <!-- Globe Icons -->
+    <div style="position:absolute;top:12%;right:8%;width:100px;height:100px;opacity:0.05;animation:globeRotate 60s linear infinite;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.7">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    <div style="position:absolute;bottom:18%;left:6%;width:90px;height:90px;opacity:0.04;animation:globeRotate 55s linear infinite reverse;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.7">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    
+    <!-- Location Pins -->
+    <div style="position:absolute;top:30%;left:10%;font-size:28px;animation:bounce 3.5s ease-in-out infinite;opacity:0.15;">📍</div>
+    <div style="position:absolute;bottom:25%;right:12%;font-size:24px;animation:bounce 4s ease-in-out infinite 1.5s;opacity:0.15;">📍</div>
+  </div>
+  
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-header">
+      <div class="section-subtitle" data-i18n="core.subtitle">核心功能</div>
+      <h2 class="section-title" data-i18n="core.title">你需要的，象寶都有</h2>
+      <p class="section-desc" data-i18n="core.desc">專為旅人設計的財務管理App，從出發前換錢到回程後結帳，全程陪你。</p>
+    </div>
+    
+    <!-- Feature 1: OCR -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center;margin-bottom:clamp(80px,12vh,120px);">
+      <div class="animate-on-scroll">
+        <div style="width:80px;height:80px;margin-bottom:24px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <h3 style="font-size:clamp(24px,3.5vw,32px);font-weight:800;margin-bottom:16px;color:white;" data-i18n="core.ocr.title">OCR 拍照翻譯</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:clamp(15px,2vw,17px);" data-i18n="core.ocr.desc">對住收據拍張相，即刻自動識別金額同貨幣，唔使手動輸入。</p>
+      </div>
+      <div class="animate-on-scroll" style="perspective:1000px;">
+        <div style="position:relative;width:min(100%,320px);aspect-ratio:9/16;margin:0 auto;transform:perspective(1000px) rotateY(-8deg);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);" onmouseenter="this.style.transform='perspective(1000px) rotateY(0deg) scale(1.05)'" onmouseleave="this.style.transform='perspective(1000px) rotateY(-8deg) scale(1)'">
+          <div style="position:absolute;inset:-10px;background:rgba(123,47,190,0.2);filter:blur(30px);border-radius:40px;"></div>
+          <div style="position:relative;width:100%;height:100%;background:linear-gradient(145deg,#f5f5f7,#c7c7cc);border-radius:36px;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,0.3);">
+            <div style="width:100%;height:100%;background:#0a0a0f;border-radius:28px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+              <img src="./assets/Section 3_Core Feature/1_OCR Screen.PNG" alt="OCR Screen" style="width:100%;height:100%;object-fit:cover;animation:pulseGlow 3s ease-in-out infinite;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Feature 2: Split Bill -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center;margin-bottom:clamp(80px,12vh,120px);direction:rtl;">
+      <div class="animate-on-scroll" style="direction:ltr;">
+        <div style="width:80px;height:80px;margin-bottom:24px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7B2FBE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3 style="font-size:clamp(24px,3.5vw,32px);font-weight:800;margin-bottom:16px;color:white;" data-i18n="core.split.title">多人分賬</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:clamp(15px,2vw,17px);" data-i18n="core.split.desc">建立旅行群組，自動計算每人應付金額，公平又簡單。</p>
+      </div>
+      <div class="animate-on-scroll" style="direction:ltr;perspective:1000px;">
+        <div style="position:relative;width:min(100%,320px);aspect-ratio:9/16;margin:0 auto;transform:perspective(1000px) rotateY(8deg);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);" onmouseenter="this.style.transform='perspective(1000px) rotateY(0deg) scale(1.05)'" onmouseleave="this.style.transform='perspective(1000px) rotateY(8deg) scale(1)'">
+          <div style="position:absolute;inset:-10px;background:rgba(236,72,153,0.2);filter:blur(30px);border-radius:40px;"></div>
+          <div style="position:relative;width:100%;height:100%;background:linear-gradient(145deg,#f5f5f7,#c7c7cc);border-radius:36px;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,0.3);">
+            <div style="width:100%;height:100%;background:#0a0a0f;border-radius:28px;overflow:hidden;">
+              <img src="./assets/Section 3_Core Feature/2_Group Overview.PNG" alt="Group Overview" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Feature 3: Exchange Rate -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center;margin-bottom:clamp(80px,12vh,120px);">
+      <div class="animate-on-scroll">
+        <div style="width:80px;height:80px;margin-bottom:24px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <h3 style="font-size:clamp(24px,3.5vw,32px);font-weight:800;margin-bottom:16px;color:white;" data-i18n="core.rate.title">即時匯率</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:clamp(15px,2vw,17px);" data-i18n="core.rate.desc">支援17種貨幣，實時更新匯率，隨時知道最準確嘅兌換比例。</p>
+      </div>
+      <div class="animate-on-scroll" style="perspective:1000px;">
+        <div style="position:relative;width:min(100%,320px);aspect-ratio:9/16;margin:0 auto;transform:perspective(1000px) rotateY(-8deg);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);" onmouseenter="this.style.transform='perspective(1000px) rotateY(0deg) scale(1.05)'" onmouseleave="this.style.transform='perspective(1000px) rotateY(-8deg) scale(1)'">
+          <div style="position:absolute;inset:-10px;background:rgba(6,182,212,0.2);filter:blur(30px);border-radius:40px;"></div>
+          <div style="position:relative;width:100%;height:100%;background:linear-gradient(145deg,#f5f5f7,#c7c7cc);border-radius:36px;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,0.3);">
+            <div style="width:100%;height:100%;background:#0a0a0f;border-radius:28px;overflow:hidden;">
+              <video autoplay loop playsinline muted style="width:100%;height:100%;object-fit:cover;">
+                <source src="./assets/Section 3_Core Feature/3_thbhkd-quote.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Feature 4: Smart Tracking -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center;direction:rtl;">
+      <div class="animate-on-scroll" style="direction:ltr;">
+        <div style="width:80px;height:80px;margin-bottom:24px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
+        <h3 style="font-size:clamp(24px,3.5vw,32px);font-weight:800;margin-bottom:16px;color:white;" data-i18n="core.smart.title">智能記帳</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.8;font-size:clamp(15px,2vw,17px);" data-i18n="core.smart.desc">自動分類支出，生成視覺化報表，清晰掌握旅行預算。</p>
+      </div>
+      <div class="animate-on-scroll" style="direction:ltr;perspective:1000px;">
+        <div style="position:relative;width:min(100%,320px);aspect-ratio:9/16;margin:0 auto;transform:perspective(1000px) rotateY(8deg);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);" onmouseenter="this.style.transform='perspective(1000px) rotateY(0deg) scale(1.05)'" onmouseleave="this.style.transform='perspective(1000px) rotateY(8deg) scale(1)'">
+          <div style="position:absolute;inset:-10px;background:rgba(251,191,36,0.2);filter:blur(30px);border-radius:40px;"></div>
+          <div style="position:relative;width:100%;height:100%;background:linear-gradient(145deg,#f5f5f7,#c7c7cc);border-radius:36px;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,0.3);">
+            <div style="width:100%;height:100%;background:#0a0a0f;border-radius:28px;overflow:hidden;">
+              <video autoplay loop playsinline muted style="width:100%;height:100%;object-fit:cover;">
+                <source src="./assets/FX Portfolio.MP4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="currencies" style="background:linear-gradient(180deg,var(--dark) 0%,rgba(6,182,212,0.05) 50%,var(--dark) 100%);position:relative;overflow:hidden;">
+  <!-- World Map Silhouette Background -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.04;">
+    <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+      <path d="M100,200 L300,180 L500,220 L700,190 L900,230 L1100,200 L1300,240 L1500,210 L1700,250 L1820,220" fill="none" stroke="white" stroke-width="3"/>
+      <path d="M120,400 L320,380 L520,420 L720,390 L920,430 L1120,400 L1320,440 L1520,410 L1720,450 L1800,420" fill="none" stroke="white" stroke-width="3"/>
+      <path d="M140,600 L340,580 L540,620 L740,590 L940,630 L1140,600 L1340,640 L1540,610 L1740,650 L1780,620" fill="none" stroke="white" stroke-width="3"/>
+      <path d="M160,800 L360,780 L560,820 L760,790 L960,830 L1160,800 L1360,840 L1560,810 L1760,850 L1760,820" fill="none" stroke="white" stroke-width="3"/>
+    </svg>
+  </div>
+  
+  <!-- Passport Stamp Decorations -->
+  <div style="position:absolute;top:10%;left:5%;width:150px;height:150px;border:3px solid rgba(236,72,153,0.15);border-radius:50%;transform:rotate(-15deg);display:flex;align-items:center;justify-content:center;opacity:0.3;animation:float 12s ease-in-out infinite;">
+    <div style="color:rgba(236,72,153,0.3);font-size:14px;font-weight:900;text-align:center;line-height:1.4;">TOKYO<br>2026</div>
+  </div>
+  <div style="position:absolute;bottom:15%;right:8%;width:140px;height:140px;border:3px solid rgba(123,47,190,0.15);border-radius:50%;transform:rotate(20deg);display:flex;align-items:center;justify-content:center;opacity:0.3;animation:float 14s ease-in-out infinite 2s;">
+    <div style="color:rgba(123,47,190,0.3);font-size:14px;font-weight:900;text-align:center;line-height:1.4;">PARIS<br>2026</div>
+  </div>
+  <div style="position:absolute;top:60%;left:12%;width:130px;height:130px;border:3px solid rgba(6,182,212,0.15);border-radius:50%;transform:rotate(-25deg);display:flex;align-items:center;justify-content:center;opacity:0.3;animation:float 13s ease-in-out infinite 1s;">
+    <div style="color:rgba(6,182,212,0.3);font-size:13px;font-weight:900;text-align:center;line-height:1.4;">NEW YORK<br>2026</div>
+  </div>
+  
+  <!-- Flying Airplanes -->
+  <div style="position:absolute;top:25%;right:-50px;font-size:24px;animation:planeFlyReverse 20s linear infinite;filter:drop-shadow(0 0 10px rgba(236,72,153,0.5));opacity:0.4;">✈️</div>
+  <div style="position:absolute;bottom:30%;left:-50px;font-size:20px;animation:planeFly 25s linear infinite 8s;filter:drop-shadow(0 0 10px rgba(123,47,190,0.5));opacity:0.4;">✈️</div>
+  
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-header">
+      <div class="section-subtitle">全球通行</div>
+      <h2 class="section-title">支援 17+ 種貨幣</h2>
+      <p class="section-desc">無論你去邊度旅行，象寶都幫到你。</p>
+    </div>
+    
+    <div class="currency-grid" style="position:relative;z-index:1;">
+      <div class="currency-item"><div class="currency-flag">🇭🇰</div><div class="currency-code">HKD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇯🇵</div><div class="currency-code">JPY</div></div>
+      <div class="currency-item"><div class="currency-flag">🇰🇷</div><div class="currency-code">KRW</div></div>
+      <div class="currency-item"><div class="currency-flag">🇺🇸</div><div class="currency-code">USD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇬🇧</div><div class="currency-code">GBP</div></div>
+      <div class="currency-item"><div class="currency-flag">🇪🇺</div><div class="currency-code">EUR</div></div>
+      <div class="currency-item"><div class="currency-flag">🇨🇳</div><div class="currency-code">CNY</div></div>
+      <div class="currency-item"><div class="currency-flag">🇦🇺</div><div class="currency-code">AUD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇨🇦</div><div class="currency-code">CAD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇨🇭</div><div class="currency-code">CHF</div></div>
+      <div class="currency-item"><div class="currency-flag">🇸🇬</div><div class="currency-code">SGD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇹🇭</div><div class="currency-code">THB</div></div>
+      <div class="currency-item"><div class="currency-flag">🇲🇾</div><div class="currency-code">MYR</div></div>
+      <div class="currency-item"><div class="currency-flag">🇮🇩</div><div class="currency-code">IDR</div></div>
+      <div class="currency-item"><div class="currency-flag">🇳🇿</div><div class="currency-code">NZD</div></div>
+      <div class="currency-item"><div class="currency-flag">🇹🇼</div><div class="currency-code">TWD</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Other Features Section - Travel Companion Theme -->
+<section class="feature-section" id="otherFeatures" style="background:rgba(10,10,15,0.5);position:relative;overflow:hidden;">
+  <!-- World Travel Background Elements -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <!-- Flight Route Lines -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.08;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <path d="M50,300 Q400,200 750,400 T1400,300 T1850,500" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 30s linear infinite;"/>
+      <path d="M100,600 Q450,500 800,700 T1500,600 T1800,750" fill="none" stroke="#7B2FBE" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 35s linear infinite reverse;"/>
+    </svg>
+    
+    <!-- Rotating Globe Icons -->
+    <div style="position:absolute;top:15%;right:10%;width:100px;height:100px;opacity:0.06;animation:globeRotate 50s linear infinite;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.8">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    <div style="position:absolute;bottom:20%;left:8%;width:80px;height:80px;opacity:0.05;animation:globeRotate 45s linear infinite reverse;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.8">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    
+    <!-- Animated Particles -->
+    <div style="position:absolute;top:20%;left:10%;width:200px;height:200px;background:radial-gradient(circle,rgba(123,47,190,0.15) 0%,transparent 70%);animation:float 6s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:20%;right:10%;width:300px;height:300px;background:radial-gradient(circle,rgba(236,72,153,0.1) 0%,transparent 70%);animation:float 8s ease-in-out infinite 1s;"></div>
+  </div>
+  
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-header">
+      <div class="section-subtitle">更多功能</div>
+      <h2 class="section-title">旅行好幫手</h2>
+      <p class="section-desc">除咗核心功能，仲有更多實用工具幫你輕鬆旅行。</p>
+    </div>
+    
+    <div class="feature-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,350px),1fr));gap:clamp(24px,4vw,32px);">
+      <!-- Weather -->
+      <div class="feature-card" style="background:rgba(255,255,255,0.03);border:1px solid rgba(123,47,190,0.15);">
+        <div style="width:64px;height:64px;margin-bottom:20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+          </svg>
+        </div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;color:#EC4899;" data-i18n="other.weather.title">最新天氣預報</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="other.weather.desc">即時顯示未來 3 天天氣，掌握陰晴變化，提前調整行程計劃。</p>
+      </div>
+      
+      <!-- Playground -->
+      <div class="feature-card" style="background:rgba(255,255,255,0.03);border:1px solid rgba(123,47,190,0.15);">
+        <div style="width:64px;height:64px;margin-bottom:20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+            <line x1="9" y1="9" x2="9.01" y2="9"/>
+            <line x1="15" y1="9" x2="15.01" y2="9"/>
+          </svg>
+        </div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;color:#EC4899;" data-i18n="other.playground.title">象寶遊樂場</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="other.playground.desc">匯聚最新優惠活動及旅行資訊，輕鬆發現旅行好去處同省錢機會。</p>
+      </div>
+      
+      <!-- Daily Expenses -->
+      <div class="feature-card" style="background:rgba(255,255,255,0.03);border:1px solid rgba(123,47,190,0.15);">
+        <div style="width:64px;height:64px;margin-bottom:20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;color:#EC4899;" data-i18n="other.daily.title">日常記賬</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="other.daily.desc">不止旅行適用，日常消費、朋友聚餐分賬都能輕鬆管理，財務記錄簡單有序。</p>
+      </div>
+      
+      <!-- Wallet -->
+      <div class="feature-card" style="background:rgba(255,255,255,0.03);border:1px solid rgba(123,47,190,0.15);">
+        <div style="width:64px;height:64px;margin-bottom:20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <circle cx="12" cy="12" r="2"/>
+            <path d="M6 12h.01M18 12h.01"/>
+          </svg>
+        </div>
+        <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;color:#EC4899;" data-i18n="other.wallet.title">外幣小錢包</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="other.wallet.desc">專為外幣管理而設，自動計算結餘，隨時掌握外幣餘額，避免換錢過多或不足。</p>
+      </div>
+      
+      <!-- FPS -->
+      <div class="feature-card" style="background:rgba(255,255,255,0.03);border:1px solid rgba(123,47,190,0.15);grid-column:span 2;">
+        <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+          <div style="width:72px;height:72px;flex-shrink:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <div style="flex:1;min-width:200px;">
+            <h3 style="font-size:22px;font-weight:800;margin-bottom:12px;color:#EC4899;" data-i18n="other.fps.title">轉數快快速結算</h3>
+            <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="other.fps.desc">一鍵生成或掃描轉數快二維碼，輕鬆完成轉賬收款，快捷安全解決旅行結算問題。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="howToUse" style="background:linear-gradient(180deg,var(--dark) 0%,rgba(123,47,190,0.08) 50%,var(--dark) 100%);position:relative;overflow:hidden;">
+  <!-- World Travel Background Elements -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <!-- Flight Routes -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.08;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <path d="M80,350 Q480,250 880,450 T1680,350" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 30s linear infinite;"/>
+      <path d="M120,550 Q520,450 920,650 T1720,550" fill="none" stroke="#7B2FBE" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 35s linear infinite reverse;"/>
+    </svg>
+    
+    <!-- Globe Icon -->
+    <div style="position:absolute;top:15%;right:10%;width:90px;height:90px;opacity:0.05;animation:globeRotate 50s linear infinite;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.7">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    
+    <!-- Flying Plane -->
+    <div style="position:absolute;top:45%;left:-50px;font-size:22px;animation:planeFly 26s linear infinite;filter:drop-shadow(0 0 10px rgba(236,72,153,0.5));opacity:0.35;">✈️</div>
+    
+    <!-- Location Pins -->
+    <div style="position:absolute;top:25%;left:15%;font-size:26px;animation:bounce 3.6s ease-in-out infinite;opacity:0.2;">📍</div>
+    <div style="position:absolute;bottom:20%;right:18%;font-size:24px;animation:bounce 4.2s ease-in-out infinite 1s;opacity:0.2;">📍</div>
+    
+    <!-- Animated Particles -->
+    <div style="position:absolute;top:20%;left:10%;width:250px;height:250px;background:radial-gradient(circle,rgba(123,47,190,0.12) 0%,transparent 70%);animation:float 7s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:20%;right:10%;width:350px;height:350px;background:radial-gradient(circle,rgba(236,72,153,0.1) 0%,transparent 70%);animation:float 9s ease-in-out infinite 1.5s;"></div>
+  </div>
+  
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-header">
+      <div class="section-subtitle" data-i18n="howto.subtitle">簡單易用</div>
+      <h2 class="section-title" data-i18n="howto.title">3 步開始使用</h2>
+      <p class="section-desc" data-i18n="howto.desc">無需複雜設定，即刻開始記錄旅行開支。</p>
+    </div>
+    
+    <!-- Steps with Connecting Line -->
+    <div style="position:relative;display:flex;justify-content:center;align-items:flex-start;gap:clamp(30px,5vw,60px);flex-wrap:wrap;margin-top:clamp(50px,8vh,80px);">
+      <!-- Connecting Line (Desktop Only) -->
+      <div style="display:none;position:absolute;top:60px;left:15%;right:15%;height:3px;background:linear-gradient(90deg,transparent 0%,#7B2FBE 20%,#EC4899 50%,#7B2FBE 80%,transparent 100%);z-index:0;" class="desktop-line"></div>
+      
+      <!-- Step 1 -->
+      <div class="animate-on-scroll" style="flex:1;min-width:280px;max-width:350px;text-align:center;position:relative;z-index:1;">
+        <div style="position:relative;display:inline-block;margin-bottom:24px;">
+          <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#7B2FBE 0%,#5a1f8a 100%);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 15px 40px rgba(123,47,190,0.4);position:relative;animation:pulse 3s ease-in-out infinite;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <!-- Number Badge -->
+          <div style="position:absolute;top:-8px;right:-8px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#f472b6);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:white;box-shadow:0 4px 15px rgba(236,72,153,0.5);border:3px solid var(--dark);">1</div>
+        </div>
+        <h3 style="font-size:clamp(22px,3vw,26px);font-weight:800;margin-bottom:12px;color:white;" data-i18n="howto.step1.title">下載 App</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.7;font-size:clamp(15px,2vw,16px);" data-i18n="howto.step1.desc">從 App Store 或 Google Play 免費下載</p>
+      </div>
+      
+      <!-- Step 2 -->
+      <div class="animate-on-scroll" style="flex:1;min-width:280px;max-width:350px;text-align:center;position:relative;z-index:1;">
+        <div style="position:relative;display:inline-block;margin-bottom:24px;">
+          <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#EC4899 0%,#db2777 100%);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 15px 40px rgba(236,72,153,0.4);position:relative;animation:pulse 3s ease-in-out infinite 0.5s;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <!-- Number Badge -->
+          <div style="position:absolute;top:-8px;right:-8px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7B2FBE,#9333ea);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:white;box-shadow:0 4px 15px rgba(123,47,190,0.5);border:3px solid var(--dark);">2</div>
+        </div>
+        <h3 style="font-size:clamp(22px,3vw,26px);font-weight:800;margin-bottom:12px;color:white;" data-i18n="howto.step2.title">建立群組</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.7;font-size:clamp(15px,2vw,16px);" data-i18n="howto.step2.desc">邀請旅伴加入，開始共同記帳</p>
+      </div>
+      
+      <!-- Step 3 -->
+      <div class="animate-on-scroll" style="flex:1;min-width:280px;max-width:350px;text-align:center;position:relative;z-index:1;">
+        <div style="position:relative;display:inline-block;margin-bottom:24px;">
+          <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#FBBF24 0%,#f59e0b 100%);display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 15px 40px rgba(251,191,36,0.4);position:relative;animation:pulse 3s ease-in-out infinite 1s;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <!-- Number Badge -->
+          <div style="position:absolute;top:-8px;right:-8px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#f472b6);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:white;box-shadow:0 4px 15px rgba(236,72,153,0.5);border:3px solid var(--dark);">3</div>
+        </div>
+        <h3 style="font-size:clamp(22px,3vw,26px);font-weight:800;margin-bottom:12px;color:white;" data-i18n="howto.step3.title">開始記帳</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.7;font-size:clamp(15px,2vw,16px);" data-i18n="howto.step3.desc">拍照或手動輸入，自動分帳計算</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="faq" style="position:relative;overflow:hidden;">
+  <!-- World Travel Background Elements -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.6;">
+    <!-- Flight Routes -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.05;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <path d="M100,400 Q500,300 900,500 T1700,400" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="8,4" style="animation:routeDash 38s linear infinite;"/>
+    </svg>
+    
+    <!-- Globe Icon -->
+    <div style="position:absolute;bottom:15%;left:8%;width:80px;height:80px;opacity:0.04;animation:globeRotate 65s linear infinite;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.7">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    
+    <!-- Location Pin -->
+    <div style="position:absolute;top:20%;right:12%;font-size:24px;animation:bounce 4s ease-in-out infinite;opacity:0.15;">📍</div>
+  </div>
+  
+  <div class="container" style="max-width:900px;position:relative;z-index:1;">
+    <div class="section-header">
+      <div class="section-subtitle" data-i18n="faq.subtitle">常見問題</div>
+      <h2 class="section-title" data-i18n="faq.title">有疑問？我哋解答</h2>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question"><span data-i18n="faq.q1">我的數據安唔安全？</span><span>▼</span></div>
+      <div class="faq-answer" data-i18n="faq.a1">絕對安全！所有數據都經過加密傳輸同儲存，我哋嚴肅對待私隱問題。你可以隨時喺設定內備份或刪除所有數據。</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question"><span>OCR 功能支唔支援繁體中文？</span><span>▼</span></div>
+      <div class="faq-answer">支援多種語言！包括繁體中文、簡體中文、英文、日文、韓文等。無論你去日本掃街定泰國食飯，一開OCR即可識別金額同貨幣種類，仲幫你翻譯為目標語言。</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question"><span>象寶有冇其他語言版本？</span><span>▼</span></div>
+      <div class="faq-answer">象寶目前只有繁體中文版本！不過簡體中文、英文等多語言版本正在研發當中，大家敬請期待。</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question"><span data-i18n="faq.q2">需要付費嗎？</span><span>▼</span></div>
+      <div class="faq-answer" data-i18n="faq.a2">基本功能完全免費！包括OCR識別、多人分帳、匯率查詢等核心功能。未來可能會推出高級功能，但基礎版本永遠免費。</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question"><span data-i18n="faq.q3">支援離線使用嗎？</span><span>▼</span></div>
+      <div class="faq-answer" data-i18n="faq.a3">是的！即使沒有網絡，你都可以正常記帳和查看歷史記錄。匯率數據會在有網絡時自動同步更新。</div>
+    </div>
+  </div>
+</section>
+
+<section class="download-section" style="background:linear-gradient(180deg,var(--dark) 0%,rgba(123,47,190,0.15) 50%,var(--dark) 100%);position:relative;overflow:hidden;">
+  <!-- World Travel Background -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;">
+    <!-- Globe Pattern -->
+    <div style="position:absolute;top:10%;left:8%;width:180px;height:180px;opacity:0.06;animation:globeRotate 55s linear infinite;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.6">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    <div style="position:absolute;bottom:15%;right:10%;width:150px;height:150px;opacity:0.05;animation:globeRotate 48s linear infinite reverse;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.6">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    
+    <!-- Flight Routes -->
+    <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.1;" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <path d="M50,500 Q500,300 950,600 T1850,400" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 26s linear infinite;"/>
+      <path d="M100,700 Q550,500 1000,800 T1800,600" fill="none" stroke="#7B2FBE" stroke-width="2" stroke-dasharray="10,5" style="animation:routeDash 32s linear infinite reverse;"/>
+    </svg>
+    
+    <!-- Flying Planes -->
+    <div style="position:absolute;top:40%;left:-50px;font-size:26px;animation:planeFly 22s linear infinite;filter:drop-shadow(0 0 12px rgba(236,72,153,0.6));">✈️</div>
+    <div style="position:absolute;top:65%;right:-50px;font-size:22px;animation:planeFlyReverse 28s linear infinite 4s;filter:drop-shadow(0 0 12px rgba(123,47,190,0.6));">✈️</div>
+    
+    <!-- Location Pins -->
+    <div style="position:absolute;top:20%;right:15%;font-size:30px;animation:bounce 3.2s ease-in-out infinite;opacity:0.2;">📍</div>
+    <div style="position:absolute;bottom:25%;left:12%;font-size:26px;animation:bounce 3.8s ease-in-out infinite 1.5s;opacity:0.2;">📍</div>
+  </div>
+  
+  <div class="container" style="position:relative;z-index:1;">
+    <!-- Jumbo Mascot with Speech Bubble -->
+    <div style="margin-bottom:40px;display:flex;justify-content:center;align-items:center;gap:30px;flex-wrap:wrap;">
+      <!-- App Icon -->
+      <a id="appIconLink" href="https://apps.apple.com/app/fx-travel-jumbo" target="_blank" style="display:inline-block;transition:all 0.3s ease;text-decoration:none;position:relative;" onmouseover="this.style.transform='scale(1.1) rotate(-5deg)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'">
+        <img id="appIconImg" src="./assets/app-icon/app-icon-new.png" alt="外遊象寶 App Icon" style="width:clamp(120px, 20vw, 180px);height:auto;border-radius:30px;box-shadow:0 15px 50px rgba(123,47,190,0.5), 0 0 80px rgba(236,72,153,0.3);animation:jumboFloat 3s ease-in-out infinite;cursor:pointer;transition:all 0.3s ease;">
+      </a>
+      
+      <!-- CTA Jumbo Mascot with Speech Bubble -->
+      <div style="position:relative;display:inline-block;">
+        <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif" alt="外遊象寶" class="jumbo-interactive" id="ctaJumboMascot" loading="lazy" style="width:clamp(200px,35vw,300px);height:auto;filter:drop-shadow(0 20px 60px rgba(123,47,190,0.5)) drop-shadow(0 0 100px rgba(236,72,153,0.3));cursor:pointer;transform:scale(1) rotate(0deg);transition:0.4s ease-out;" onmouseover="this.style.transform='scale(1.05) rotate(-3deg)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'">
+        
+        <!-- Speech Bubble -->
+        <div style="position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:16px;padding:16px 20px;box-shadow:0 8px 30px rgba(0,0,0,0.2);max-width:280px;white-space:nowrap;pointer-events:none;opacity:1;transition:opacity 0.3s ease;z-index:100;">
+          <div style="color:#7B2FBE;font-size:18px;font-weight:700;margin-bottom:4px;">帶埋我去環遊世界啦 🌍✈️</div>
+          <div style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid rgba(255,255,255,0.95);"></div>
+        </div>
+      </div>
+    </div>
+    
+    <h2 class="section-title">準備好開始你的旅程了嗎？</h2>
+    <p class="section-desc" style="margin-bottom:40px;">立即免費下載，讓外遊象寶陪你探索世界</p>
+    
+    <div class="download-buttons">
+      <a href="https://apps.apple.com/app/fx-travel-jumbo" class="download-btn">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <div style="text-align:left;"><div style="font-size:12px;color:rgba(255,255,255,0.7);">Download on the</div><div style="font-size:18px;">App Store</div></div>
+      </a>
+      
+      <a href="https://play.google.com/store/apps/details?id=com.fxtraveljumbo" class="download-btn">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+          <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+        </svg>
+        <div style="text-align:left;"><div style="font-size:12px;color:rgba(255,255,255,0.7);">GET IT ON</div><div style="font-size:18px;">Google Play</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer style="background:rgba(10,10,15,0.95);border-top:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden;padding:40px 0;">
+  <!-- Subtle World Map Background -->
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.03;">
+    <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;">
+      <path d="M100,300 L400,280 L700,320 L1000,290 L1300,330 L1600,300 L1820,340" fill="none" stroke="white" stroke-width="2"/>
+      <path d="M150,500 L450,480 L750,520 L1050,490 L1350,530 L1650,500 L1770,540" fill="none" stroke="white" stroke-width="2"/>
+    </svg>
+  </div>
+  
+  <div class="container" style="position:relative;z-index:1;text-align:center;">
+    <p style="color:rgba(255,255,255,0.6);font-size:15px;">&copy; 2026 外遊象寶 FX Travel Jumbo. All rights reserved.</p>
+    <p style="margin-top:12px;font-size:14px;color:rgba(255,255,255,0.5);">Made with ❤️ for travelers around the world 🌍</p>
+    <p style="margin-top:8px;font-size:13px;color:rgba(255,255,255,0.4);">陪你探索世界每一角落 | Exploring the world together</p>
+  </div>
+</footer>
+
+<script>
+class AudioSystem {
+  constructor() {
+    this.isMuted = false;
+    this.currentAudio = null;
+  }
+  
+  playSound(soundType, volume = 1.0) {
+    if (this.isMuted) return null;
+    
+    try {
+      const audioPath = soundType === 'hero' ? '/assets/sounds/hero-sound.mp3' : '/assets/sounds/bottom-sound.wav';
+      logger.log(`🔊 Playing ${soundType} sound from:`, audioPath);
+      
+      const audio = new Audio(audioPath);
+      audio.volume = volume;
+      audio.play().catch(error => logger.warn(`⚠️ Playback failed:`, error));
+      this.currentAudio = audio;
+      return audio;
+    } catch (error) {
+      logger.error(`❌ Sound error:`, error);
+      return null;
+    }
+  }
+  
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    
+    const muteIcon = document.getElementById('muteIcon');
+    const unmuteIcon = document.getElementById('unmuteIcon');
+    
+    if (this.isMuted) {
+      muteIcon.style.display = 'none';
+      unmuteIcon.style.display = 'block';
+      if (this.currentAudio) {
+        this.currentAudio.muted = true;
+      }
+      logger.log('🔇 Sound muted');
+    } else {
+      muteIcon.style.display = 'block';
+      unmuteIcon.style.display = 'none';
+      if (this.currentAudio) {
+        this.currentAudio.muted = false;
+      }
+      logger.log('🔊 Sound unmuted');
+    }
+    
+    return this.isMuted;
+  }
+}
+
+class SpeechBubbleManager {
+  constructor(bubbleElement) {
+    this.bubble = bubbleElement;
+    this.messages = [
+      { greeting: '📷 一影即譯', message: '收據長過行程表？交俾象寶啦！' },
+      { greeting: '🧓 公道伯', message: '人情還人情，象寶好分明！' },
+      { greeting: '💭 象寶提提你', message: '唔使扮唔記得，象寶幫你記低晒。' },
+      { greeting: '🤓 專屬管家', message: '有得玩有得畀，象寶幫你check邊個未畀錢！' },
+      { greeting: '🧐 Mon住個市', message: '匯率升得快過你叫外賣...' },
+      { greeting: '🚬 最難的事', message: '食飯容易，分帳難。' },
+      { greeting: '🤑 實時匯率', message: '匯率update緊...睇下啱唔啱換。' },
+      { greeting: '🔋 互助互愛', message: '我幫你記緊帳，你幫我充下電ok？' },
+      { greeting: '📝 小氣寶寶', message: '阿明未俾錢？小氣象寶幫你mark入小氣簿~' },
+      { greeting: '🧠 論記性', message: '象寶記得啲數，人記得啲仇。' },
+      { greeting: '👀 清楚見底', message: '你玩得幾盡，象寶就睇得幾清！' },
+      { greeting: '👊 Hi Bro', message: '條數未清，莫講兄弟情。' },
+      { greeting: '🥸 成熟表現', message: '俾錢快過覆msg，呢啲就叫成熟。' },
+      { greeting: '🚬 看透滄桑', message: '匯率浮沉如感情...' },
+      { greeting: '🧐 公道伯', message: 'AA制未必絕對公平，但至少象寶計得好公平。' },
+      { greeting: '🫡 知我咩料', message: '象寶見過最亂嘅帳，比分岔嘅感情線仲複雜。' },
+      { greeting: '⏳ 哲學問題', message: '象寶都想知道，「遲啲俾」究竟係幾時俾。' },
+      { greeting: '🍛 隔籬飯餸香', message: '喺屋企諗住食當地美食，去到先發現最掛住泡麵。' },
+      { greeting: '⚠️ 睇實條數', message: '乜都可以放鬆，唯獨帳目唔得。' },
+      { greeting: '🏃 衝出東8區', message: '當地時間下晝三點，我身體以為係凌晨三點。' },
+      { greeting: '🐘 象寶唔係象？', message: '平時返工懶到死，旅行起身早過雞。' },
+      { greeting: '🤐 益街坊', message: '講好只買少少，結果行李箱塞都塞唔入。' },
+      { greeting: '🫣 Oops', message: '出發前發誓要慳錢，返嚟發現信用卡爆數。' },
+      { greeting: '🤚 堅拒窮遊', message: '「外幣貶值，唔係冇價值」...牙？買咗先算喇！' },
+      { greeting: '🫰 象寶幫你mark', message: '「免稅不是免費」...但咁平唔係唔買牙？' },
+      { greeting: '💸 好滿足', message: '錢錢變成喜歡的形狀飛走了～' },
+      { greeting: '😈 旅行變修行', message: '冇WiFi嘅旅行，簡直同世隔絕。' },
+      { greeting: '😴 Loading', message: '其實象寶都鍾意抖下。' },
+      { greeting: '✈️ 旅行真相', message: '旅行就係由一個你厭倦嘅地方，去另一個你都會厭倦嘅地方。' },
+      { greeting: '⏰ 耐心等候', message: '唔使急，象寶幫你盯住。' },
+      { greeting: '📒 帳務專家', message: '象寶幫你搞掂所有帳目。' },
+      { greeting: '🤔 小心睇路', message: '導航話前面右轉，眼前見到嘅係死路。' },
+      { greeting: '💡 記帳哲學', message: '記帳唔代表孤寒，代表你有腦。' },
+      { greeting: '🧳 執行李', message: '帶咗一堆唔著嘅衫，卻忘記咗最重要嗰件。' },
+      { greeting: '🍀 象寶溫提', message: '乜都可以hea，條數唔可以。' },
+      { greeting: '🤣 人生最難', message: '金錢唔係問題，分帳先係難題。' },
+      { greeting: '🌤️ 天氣亂報', message: '天氣預報話晴天，我一帶遮就落雨。' },
+      { greeting: '📸 打卡哲學', message: '影相五分鐘，修圖兩小時。' },
+      { greeting: '💱 實時提醒', message: '匯率再咁跌，我都想幫你止蝕。' }
+    ];
+    this.currentIndex = 0;
+    this.autoRotateTimer = null;
+  }
+  
+  updateMessage(index) {
+    if (!this.bubble) return;
+    const msg = this.messages[index];
+    const greetingDiv = this.bubble.querySelector('.speech-bubble-greeting');
+    const messageDiv = this.bubble.querySelector('.speech-bubble-message');
+    
+    if (greetingDiv && messageDiv) {
+      greetingDiv.innerHTML = msg.greeting;
+      messageDiv.innerHTML = msg.message;
+    }
+  }
+  
+  nextMessage() {
+    this.currentIndex = (this.currentIndex + 1) % this.messages.length;
+    this.updateMessage(this.currentIndex);
+  }
+  
+  startAutoRotate(interval = 15000) {
+    if (this.autoRotateTimer) clearInterval(this.autoRotateTimer);
+    this.autoRotateTimer = setInterval(() => this.nextMessage(), interval);
+  }
+}
+
+class JumboMascot {
+  constructor(element, audioSystem, bubbleManager) {
+    this.element = element;
+    this.audio = audioSystem;
+    this.bubble = bubbleManager;
+    this.lastPlayTime = 0;
+    this.init();
+  }
+  
+  init() {
+    this.element.addEventListener('click', () => this.handleClick());
+    this.element.addEventListener('mouseenter', () => this.handleMouseEnter());
+  }
+  
+  handleClick() {
+    this.audio.playSound('bottom');
+    if (this.bubble) this.bubble.nextMessage();
+    
+    this.element.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    this.element.style.transform = 'scale(1.05) rotate(5deg)';
+    setTimeout(() => { this.element.style.transform = 'scale(1) rotate(0deg)'; }, 300);
+  }
+  
+  handleMouseEnter() {
+    const now = Date.now();
+    if (now - this.lastPlayTime > 5000) {
+      this.lastPlayTime = now;
+      this.audio.playSound('bottom', 0.5);
+    }
+  }
+  
+  // Add fun click interaction
+  handleClick() {
+    // Create emoji explosion effect
+    const emojis = ['🎉', '✨', '🚀', '💯', '🔥', '🌟', '💪', '🐘'];
+    const rect = this.element.getBoundingClientRect();
+    
+    for (let i = 0; i < 8; i++) {
+      const emoji = document.createElement('div');
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.position = 'fixed';
+      emoji.style.left = rect.left + rect.width / 2 + 'px';
+      emoji.style.top = rect.top + rect.height / 2 + 'px';
+      emoji.style.fontSize = '24px';
+      emoji.style.pointerEvents = 'none';
+      emoji.style.zIndex = '9999';
+      emoji.style.transition = 'all 1s ease-out';
+      emoji.style.opacity = '1';
+      
+      document.body.appendChild(emoji);
+      
+      // Animate outward
+      const angle = (Math.PI * 2 * i) / 8;
+      const distance = 100 + Math.random() * 50;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+      
+      setTimeout(() => {
+        emoji.style.transform = `translate(${x}px, ${y}px) scale(0)`;
+        emoji.style.opacity = '0';
+      }, 50);
+      
+      setTimeout(() => emoji.remove(), 1000);
+    }
+    
+    // Play sound if available
+    this.handleMouseEnter();
+  }
+}
+
+class I18nManager {
+  constructor() {
+    this.translations = {};
+    this.currentLang = 'zh-TW';
+    this.isLoaded = false;
+    // Load immediately but asynchronously (don't block)
+    this.loadTranslations();
+  }
+  
+  async loadTranslations() {
+    if (this.isLoaded) return;
+    
+    try {
+      const response = await fetch('./translations.json');
+      this.translations = await response.json();
+      this.isLoaded = true;
+      this.applyTranslations();
+      logger.log('✅ Translations loaded');
+    } catch (error) {
+      logger.error('Failed to load translations:', error);
+    }
+  }
+  
+  applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const translation = this.translations[this.currentLang]?.[key];
+      if (translation) el.textContent = translation;
+    });
+  }
+  
+  setLanguage(lang) {
+    this.currentLang = lang;
+    this.applyTranslations();
+  }
+}
+
+class App {
+  constructor() {
+    this.audioSystem = new AudioSystem();
+    this.i18n = new I18nManager();
+    
+    // Make instances globally accessible for event handlers
+    window.appAudioSystem = this.audioSystem;
+    window.appI18n = this.i18n;
+    
+    logger.log('✅ App initialized - window.appI18n available:', !!window.appI18n);
+    
+    this.init();
+  }
+  
+  init() {
+    logger.log('🚀 Super Creative App v' + CONFIG.version + ' initializing...');
+    
+    // Critical: Initialize immediately
+    new CustomCursor();
+    new ScrollProgress();
+    new ScrollAnimations();
+    
+    // Defer non-critical effects to improve initial load
+    setTimeout(() => {
+      new ParticleSystem();
+      new RippleEffect();
+      logger.log('✨ Non-critical effects initialized');
+    }, 500);
+    
+    const bubbleElement = document.getElementById('heroSpeechBubble');
+    const bubbleManager = new SpeechBubbleManager(bubbleElement);
+    
+    const jumboElement = document.getElementById('fixedJumboMascot');
+    const jumboInnerElement = jumboElement ? jumboElement.querySelector('.jumbo-mascot') : null;
+    const speechBubble = document.getElementById('heroSpeechBubble');
+    const jumboMascot = new JumboMascot(jumboInnerElement, this.audioSystem, bubbleManager);
+    
+    // Hover effect - show speech bubble
+    if (jumboElement && speechBubble) {
+      jumboElement.addEventListener('mouseenter', () => {
+        speechBubble.style.opacity = '1';
+      });
+      
+      jumboElement.addEventListener('mouseleave', () => {
+        speechBubble.style.opacity = '0';
+      });
+    }
+    
+    // Add click interaction for fun emoji explosion
+    if (jumboElement) {
+      jumboElement.addEventListener('click', () => {
+        // Play sound effect
+        try {
+          const audio = new Audio('./assets/sounds/bottom-sound.wav');
+          audio.volume = 0.6;
+          audio.play().catch(err => console.warn('Sound play failed:', err));
+        } catch (e) {}
+        
+        // Trigger mascot animation
+        if (jumboMascot) {
+          jumboMascot.handleClick();
+        }
+        
+        // Reset float animation
+        const img = jumboElement.querySelector('img');
+        if (img) {
+          img.style.animation = 'none';
+          img.offsetHeight; // Trigger reflow
+          setTimeout(() => {
+            img.style.animation = 'jumboFloat 3s ease-in-out infinite';
+          }, 10);
+        }
+        
+        // Show speech bubble briefly
+        if (speechBubble) {
+          speechBubble.style.opacity = '1';
+          setTimeout(() => {
+            speechBubble.style.opacity = '0';
+          }, 2000);
+        }
+      });
+    }
+    
+    bubbleManager.startAutoRotate(20000);
+    
+    // Mobile menu toggle with smooth animation
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (mobileMenuToggle && navLinks) {
+      let isMenuOpen = false;
+      
+      mobileMenuToggle.addEventListener('click', () => {
+        isMenuOpen = !isMenuOpen;
+        
+        if (isMenuOpen) {
+          // Open menu with slideDown animation
+          navLinks.classList.add('active');
+          navLinks.style.animation = 'slideDown 0.3s ease-out';
+          mobileMenuToggle.textContent = '✕';
+          mobileMenuToggle.style.transform = 'rotate(180deg)';
+        } else {
+          // Close menu with slideUp animation
+          navLinks.style.animation = 'slideUp 0.3s ease-in';
+          mobileMenuToggle.textContent = '☰';
+          mobileMenuToggle.style.transform = 'rotate(0deg)';
+          
+          // Remove active class after animation completes
+          setTimeout(() => {
+            navLinks.classList.remove('active');
+            navLinks.style.animation = '';
+          }, 300);
+        }
+      });
+      
+      // Close menu when clicking a link
+      navLinks.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          isMenuOpen = false;
+          navLinks.style.animation = 'slideUp 0.3s ease-in';
+          mobileMenuToggle.textContent = '☰';
+          mobileMenuToggle.style.transform = 'rotate(0deg)';
+          
+          setTimeout(() => {
+            navLinks.classList.remove('active');
+            navLinks.style.animation = '';
+          }, 300);
+        });
+      });
+    }
+    
+    // Back to Top button - Always visible
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+      // Add hover effect
+      backToTopBtn.addEventListener('mouseenter', () => {
+        backToTopBtn.style.background = 'rgba(236,72,153,0.9)';
+        backToTopBtn.style.transform = 'translateY(-3px) scale(1.1)';
+        backToTopBtn.style.boxShadow = '0 8px 30px rgba(236,72,153,0.6)';
+      });
+      
+      backToTopBtn.addEventListener('mouseleave', () => {
+        backToTopBtn.style.background = 'rgba(123,47,190,0.8)';
+        backToTopBtn.style.transform = 'translateY(0) scale(1)';
+        backToTopBtn.style.boxShadow = '0 4px 20px rgba(123,47,190,0.4)';
+      });
+      
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+    
+    // Fixed Navigation - Enhance on scroll
+    const mainNav = document.getElementById('mainNav');
+    if (mainNav) {
+      let lastScrollY = window.scrollY;
+      
+      window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > 50) {
+          // Scrolled - make nav more prominent
+          mainNav.style.background = 'rgba(10,10,15,0.95)';
+          mainNav.style.backdropFilter = 'blur(25px)';
+          mainNav.style.boxShadow = '0 4px 30px rgba(0,0,0,0.5)';
+          mainNav.style.borderBottom = '1px solid rgba(255,255,255,0.15)';
+        } else {
+          // At top - normal state
+          mainNav.style.background = 'rgba(10,10,15,0.8)';
+          mainNav.style.backdropFilter = 'blur(20px)';
+          mainNav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.3)';
+          mainNav.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+        }
+        
+        lastScrollY = currentScrollY;
+      }, { passive: true });
+    }
+    
+    // FAQ toggle with animation
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const answer = q.nextElementSibling;
+        const arrow = q.querySelector('span');
+        
+        if (answer.style.display === 'none' || !answer.style.display) {
+          answer.style.display = 'block';
+          answer.style.animation = 'fadeIn 0.3s ease-out';
+          arrow.textContent = '▲';
+          arrow.style.transform = 'rotate(180deg)';
+        } else {
+          answer.style.display = 'none';
+          arrow.textContent = '▼';
+          arrow.style.transform = 'rotate(0deg)';
+        }
+      });
+    });
+    
+    // Navigation scroll effect with Intersection Observer for precise active section tracking
+    const nav = document.getElementById('mainNav');
+    const sections = document.querySelectorAll('section[id]');
+    const navLinksAll = document.querySelectorAll('.nav-link[href^="#"]');
+    
+    // Use Intersection Observer for precise section tracking
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px', // Trigger when section is in top 20-70% of viewport
+      threshold: 0
+    };
+    
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const currentId = entry.target.getAttribute('id');
+          
+          // Update active nav link
+          navLinksAll.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + currentId) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all sections
+    sections.forEach(section => {
+      sectionObserver.observe(section);
+    });
+    
+    // Nav background change on scroll (keep this separate)
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+    
+    // Currency items random rotation on hover
+    document.querySelectorAll('.currency-item').forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        const randomRotation = (Math.random() - 0.5) * 20;
+        item.style.transform = `translateY(-8px) scale(1.1) rotate(${randomRotation}deg)`;
+      });
+    });
+    
+    // Feature cards tilt effect
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-12px) scale(1.02)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+      });
+    });
+    
+    // Volume toggle button
+    const volumeToggle = document.getElementById('volumeToggle');
+    if (volumeToggle) {
+      volumeToggle.addEventListener('click', () => {
+        window.appAudioSystem.toggleMute();
+        
+        // Add click animation
+        volumeToggle.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+          volumeToggle.style.transform = '';
+        }, 150);
+      });
+    }
+    
+    // Language selector functionality with enhanced animations
+    // NOTE: langToggle is now hidden (display:none), using fixedLangButton instead
+    const langToggle = document.getElementById('langToggle');
+    const langDropdown = document.getElementById('langDropdown');
+    const currentLangSpan = document.getElementById('currentLang');
+    const globeIcon = document.getElementById('globeIcon');
+    
+    if (langToggle && langDropdown) {
+      // This code won't execute since langToggle is hidden, but kept for reference
+      // Toggle dropdown with rotation animation
+      langToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = langDropdown.style.display === 'block';
+        langDropdown.style.display = isVisible ? 'none' : 'block';
+        
+        // Rotate globe icon
+        if (!isVisible && globeIcon) {
+          globeIcon.style.transform = 'rotate(360deg)';
+          setTimeout(() => {
+            globeIcon.style.transform = 'rotate(0deg)';
+          }, 500);
+        }
+        
+        // Button hover effect
+        langToggle.style.background = 'rgba(123,47,190,0.2)';
+        setTimeout(() => {
+          langToggle.style.background = 'rgba(255,255,255,0.1)';
+        }, 200);
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!langToggle.contains(e.target) && !langDropdown.contains(e.target)) {
+          langDropdown.style.display = 'none';
+        }
+      });
+      
+      // Handle language selection
+      
+      document.querySelectorAll('.lang-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+          const lang = e.target.dataset.lang;
+          window.appI18n.setLanguage(lang);
+          
+          // Update current lang display
+          if (currentLangSpan) {
+            currentLangSpan.textContent = langNames[lang];
+          }
+          
+          // Close dropdown
+          langDropdown.style.display = 'none';
+          
+          // Add success animation
+          langToggle.style.background = 'rgba(123,47,190,0.3)';
+          setTimeout(() => {
+            langToggle.style.background = 'rgba(255,255,255,0.1)';
+          }, 300);
+          
+          logger.log(`✅ Language switched to: ${lang}`);
+        });
+        
+        // Hover effect
+        option.addEventListener('mouseenter', () => {
+          option.style.background = 'rgba(123,47,190,0.2)';
+        });
+        option.addEventListener('mouseleave', () => {
+          option.style.background = 'transparent';
+        });
+      });
+    }
+    
+    // FIXED Language Toggle - Always visible at top-right
+    const fixedLangButton = document.getElementById('fixedLangButton');
+    const fixedLangDropdown = document.getElementById('fixedLangDropdown');
+    const fixedCurrentLang = document.getElementById('fixedCurrentLang');
+    
+    // Define langNames here so it's available for both toggles
+    const langNames = {
+      'zh-TW': '繁體中文',
+      'zh-CN': '简体中文',
+      'en': 'English',
+      'ja': '日本語',
+      'ko': '한국어'
+    };
+    
+    if (fixedLangButton && fixedLangDropdown) {
+      logger.log('✅ Fixed language button initialized');
+      
+      // Toggle dropdown
+      fixedLangButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = fixedLangDropdown.style.display === 'block';
+        fixedLangDropdown.style.display = isVisible ? 'none' : 'block';
+        logger.log(`🌐 Language dropdown ${isVisible ? 'closed' : 'opened'}`);
+        
+        // Button feedback
+        fixedLangButton.style.background = 'rgba(123,47,190,0.3)';
+        setTimeout(() => {
+          fixedLangButton.style.background = 'rgba(255,255,255,0.15)';
+        }, 200);
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!fixedLangButton.contains(e.target) && !fixedLangDropdown.contains(e.target)) {
+          fixedLangDropdown.style.display = 'none';
+        }
+      });
+      
+      // Handle language selection for fixed toggle
+      document.querySelectorAll('.fixed-lang-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+          const lang = e.target.dataset.lang;
+          logger.log(`🔄 Switching language to: ${lang}`);
+          
+          // Check if appI18n is available
+          if (!window.appI18n) {
+            logger.error('❌ window.appI18n is not available!');
+            alert('語言系統未初始化，請刷新頁面重試');
+            return;
+          }
+          
+          window.appI18n.setLanguage(lang);
+          logger.log(`✅ Language set to: ${lang}`);
+          
+          // Update both displays
+          if (fixedCurrentLang) {
+            fixedCurrentLang.textContent = langNames[lang];
+          }
+          if (currentLangSpan) {
+            currentLangSpan.textContent = langNames[lang];
+          }
+          
+          // Close dropdown
+          fixedLangDropdown.style.display = 'none';
+          
+          // Success animation
+          fixedLangButton.style.background = 'rgba(123,47,190,0.4)';
+          setTimeout(() => {
+            fixedLangButton.style.background = 'rgba(255,255,255,0.15)';
+          }, 300);
+          
+          logger.log(`✅ Language switched to: ${lang}`);
+        });
+        
+        // Hover effect
+        option.addEventListener('mouseenter', () => {
+          option.style.background = 'rgba(123,47,190,0.2)';
+        });
+        option.addEventListener('mouseleave', () => {
+          option.style.background = 'transparent';
+        });
+      });
+      
+      // Hover effects for button
+      fixedLangButton.addEventListener('mouseenter', () => {
+        fixedLangButton.style.background = 'rgba(123,47,190,0.25)';
+        fixedLangButton.style.transform = 'scale(1.05)';
+      });
+      
+      fixedLangButton.addEventListener('mouseleave', () => {
+        fixedLangButton.style.background = 'rgba(255,255,255,0.15)';
+        fixedLangButton.style.transform = 'scale(1)';
+      });
+    }
+    
+    // 🎉 Crazy App Icon Click Effect
+    const appIconLink = document.getElementById('appIconLink');
+    const appIconImg = document.getElementById('appIconImg');
+    
+    if (appIconLink && appIconImg) {
+      appIconLink.addEventListener('click', (e) => {
+        e.preventDefault(); // 先阻止默認跳轉，等特效完成後再跳轉
+        
+        // 播放點擊音效
+        playClickSound();
+        
+        // 1. 瘋狂震動效果
+        appIconImg.style.animation = 'none';
+        appIconImg.offsetHeight; // 觸發重繪
+        appIconImg.style.animation = 'crazyShake 0.5s ease-in-out';
+        
+        // 2. 彩虹光暈爆炸
+        appIconImg.style.boxShadow = `
+          0 0 60px rgba(255, 0, 0, 0.8),
+          0 0 100px rgba(255, 165, 0, 0.8),
+          0 0 140px rgba(255, 255, 0, 0.8),
+          0 0 180px rgba(0, 255, 0, 0.8),
+          0 0 220px rgba(0, 0, 255, 0.8),
+          0 0 260px rgba(75, 0, 130, 0.8),
+          0 0 300px rgba(238, 130, 238, 0.8)
+        `;
+        
+        // 3. 快速旋轉 + 放大
+        appIconImg.style.transform = 'scale(1.5) rotate(720deg)';
+        
+        // 4. 創建粒子爆炸效果
+        createParticleExplosion(e.clientX, e.clientY);
+        
+        // 5. 添加閃爍效果
+        let flashCount = 0;
+        const flashInterval = setInterval(() => {
+          appIconImg.style.filter = flashCount % 2 === 0 ? 'brightness(2) saturate(2)' : 'brightness(1) saturate(1)';
+          flashCount++;
+          if (flashCount >= 6) {
+            clearInterval(flashInterval);
+            appIconImg.style.filter = '';
+          }
+        }, 100);
+        
+        // 6. 延遲後恢復並跳轉
+        setTimeout(() => {
+          appIconImg.style.animation = 'jumboFloat 3s ease-in-out infinite';
+          appIconImg.style.boxShadow = '0 15px 50px rgba(123,47,190,0.5), 0 0 80px rgba(236,72,153,0.3)';
+          appIconImg.style.transform = 'scale(1) rotate(0deg)';
+          
+          // 跳轉到 App Store
+          window.open(appIconLink.href, '_blank');
+        }, 800);
+      });
+    }
+    
+    // 創建點擊音效
+    function playClickSound() {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // 設置音效參數 - 歡快的上升音調
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.2);
+        
+        // 音量包絡
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      } catch (error) {
+        logger.warn('⚠️ Sound effect failed:', error);
+      }
+    }
+    
+    // 播放 Jumbo 音效
+    function playJumboSound() {
+      try {
+        const audio = new Audio('./assets/sounds/bottom-sound.wav');
+        audio.volume = 0.6;
+        audio.play().catch(error => {
+          logger.warn('⚠️ Jumbo sound playback failed:', error);
+        });
+      } catch (error) {
+        logger.warn('⚠️ Jumbo sound error:', error);
+      }
+    }
+    
+    // 創建粒子爆炸效果函數
+    function createParticleExplosion(x, y) {
+      const colors = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#EE82EE', '#FF69B4', '#00CED1'];
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        const size = Math.random() * 10 + 5;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const velocity = Math.random() * 150 + 100;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+        
+        particle.style.cssText = `
+          position: fixed;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${size}px;
+          height: ${size}px;
+          background: ${color};
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 9999;
+          box-shadow: 0 0 10px ${color};
+          animation: particleFly 0.8s ease-out forwards;
+          --tx: ${tx}px;
+          --ty: ${ty}px;
+        `;
+        
+        document.body.appendChild(particle);
+        
+        // 動畫結束後移除
+        setTimeout(() => {
+          particle.remove();
+        }, 800);
+      }
+    }
+    
+    logger.log('✅ Super Creative App initialized successfully 🎉');
+    
+    // Video Sound Toggle
+    const videoSoundToggle = document.getElementById('videoSoundToggle');
+    const heroVideo = document.getElementById('heroVideo');
+    const soundIcon = document.getElementById('soundIcon');
+    
+    if (videoSoundToggle && heroVideo) {
+      let isMuted = true; // Start muted for autoplay compatibility
+      heroVideo.muted = true;
+      
+      videoSoundToggle.addEventListener('click', () => {
+        isMuted = !isMuted;
+        heroVideo.muted = isMuted;
+        
+        // Update icon based on mute state
+        if (isMuted) {
+          soundIcon.innerHTML = `
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          `;
+          videoSoundToggle.style.opacity = '0.6';
+        } else {
+          soundIcon.innerHTML = `
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          `;
+          videoSoundToggle.style.opacity = '1';
+        }
+      });
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => { 
+  // Hide loading indicator when page is ready
+  const loadingIndicator = document.getElementById('loadingIndicator');
+  if (loadingIndicator) {
+    setTimeout(() => {
+      loadingIndicator.style.opacity = '0';
+      setTimeout(() => {
+        loadingIndicator.style.display = 'none';
+      }, 500);
+    }, 800); // Show for at least 800ms for smooth UX
+  }
+  
+  window.app = new App(); 
+});
+</script>
+
+<!-- Fixed Elements - Removed for natural flow -->
+
+<!-- Hero Video Sound Toggle Button - Inline with content -->
+<button id="videoSoundToggle" style="position:absolute;bottom:160px;right:30px;z-index:10;background:rgba(10,10,15,0.7);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;color:white;font-size:20px;box-shadow:0 4px 15px rgba(0,0,0,0.3);" title="Toggle Sound">
+  <svg id="soundIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+  </svg>
+</button>
+
+<!-- Volume Toggle Button - Inline with content -->
+<button id="volumeToggle" aria-label="切換背景音樂開關" style="position:absolute;bottom:100px;left:30px;z-index:10;background:rgba(255,255,255,0.15);backdrop-filter:blur(15px);border:1px solid rgba(123,47,190,0.4);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;color:white;opacity:1;pointer-events:auto;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+  <svg id="muteIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+  </svg>
+  <svg id="unmuteIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+    <line x1="23" y1="9" x2="17" y2="15"></line>
+    <line x1="17" y1="9" x2="23" y2="15"></line>
+  </svg>
+</button>
+
+<!-- Back to Top Button - Inline with content -->
+<button id="backToTop" aria-label="回到頂部" style="position:absolute;bottom:30px;right:30px;z-index:10;background:rgba(123,47,190,0.8);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.2);border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;color:white;opacity:1;pointer-events:auto;transform:translateY(0);box-shadow:0 4px 20px rgba(123,47,190,0.4);">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>
+</button>
+
+<!-- UAT Watermark - Inline -->
+<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:clamp(60px,10vw,120px);font-weight:900;color:rgba(255,255,255,0.03);pointer-events:none;z-index:1;white-space:nowrap;letter-spacing:20px;">UAT TESTING</div>
+
+<!-- Language Toggle - Inline with content -->
+<div id="fixedLangToggle" style="position:absolute;top:80px;right:30px;z-index:10;">
+  <button id="fixedLangButton" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.25);border-radius:10px;padding:10px 16px;color:white;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:14px;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.3);font-weight:500;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+    <span id="fixedCurrentLang">繁體中文</span>
+    <span style="font-size:11px;opacity:0.7;">▼</span>
+  </button>
+  <div id="fixedLangDropdown" style="display:none;position:absolute;top:calc(100% + 10px);right:0;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:8px;min-width:170px;z-index:100000;box-shadow:0 15px 40px rgba(0,0,0,0.6);">
+    <div class="fixed-lang-option" data-lang="zh-TW" style="padding:12px 16px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇭🇰 繁體中文</div>
+    <div class="fixed-lang-option" data-lang="zh-CN" style="padding:12px 16px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇨🇳 简体中文</div>
+    <div class="fixed-lang-option" data-lang="en" style="padding:12px 16px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇺🇸 English</div>
+    <div class="fixed-lang-option" data-lang="ja" style="padding:12px 16px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇯🇵 日本語</div>
+    <div class="fixed-lang-option" data-lang="ko" style="padding:12px 16px;border-radius:8px;cursor:pointer;color:white;transition:all 0.2s ease;display:flex;align-items:center;gap:10px;font-size:14px;">🇰🇷 한국어</div>
+  </div>
+</div>
+
+<!-- Jumbo Mascot - FIXED to browser viewport -->
+<div id="fixedJumboMascot" style="position:fixed !important;bottom:180px !important;right:30px !important;z-index:99999 !important;cursor:pointer;pointer-events:auto;opacity:1;visibility:visible;display:block;">
+  <div class="jumbo-mascot" title="Click me! I'm friendly! 👋" style="position:relative;display:block;">
+    <!-- Fallback placeholder if GIF fails to load -->
+    <div id="jumboPlaceholder" style="width:clamp(80px,15vw,180px);height:clamp(80px,15vw,180px);background:linear-gradient(135deg,#7B2FBE,#EC4899);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(40px,8vw,80px);animation:jumboFloat 3s ease-in-out infinite;box-shadow:0 10px 30px rgba(123,47,190,0.4);">
+      🐘
+    </div>
+    <!-- GIF image - will hide placeholder when loaded -->
+    <img id="jumboGifImg" src="./assets/jumbo-gif/jumbo-wave-transparent.gif" alt="外遊象寶" style="width:clamp(80px,15vw,180px);height:auto;filter:drop-shadow(0 10px 30px rgba(123,47,190,0.4));animation:jumboFloat 3s ease-in-out infinite;transition:all 0.3s ease;display:none;opacity:1;visibility:visible;" onload="this.style.display='block';document.getElementById('jumboPlaceholder').style.display='none';" onerror="console.error('GIF failed to load');this.style.display='none';">
+    <div class="speech-bubble" id="heroSpeechBubble" style="position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:16px;padding:16px 20px;box-shadow:0 8px 30px rgba(0,0,0,0.2);max-width:280px;white-space:normal;pointer-events:none;opacity:0;transition:opacity 0.3s ease;z-index:100000;">
+      <div class="speech-bubble-content">
+        <div class="speech-bubble-greeting" data-i18n="hero.jumbo.greeting1" style="color:#7B2FBE;font-size:16px;font-weight:700;margin-bottom:8px;">你好呀！👋</div>
+        <div class="speech-bubble-message" data-i18n="hero.jumbo.message1" style="color:#333;font-size:14px;line-height:1.5;">我係外遊象寶，幫你輕鬆管理旅行開支！✨</div>
+        <div class="speech-bubble-arrow" style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid rgba(255,255,255,0.95);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

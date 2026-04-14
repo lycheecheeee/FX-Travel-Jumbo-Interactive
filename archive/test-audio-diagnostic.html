@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音效测试 - FX Travel Jumbo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #7B2FBE;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #6a28a8;
+        }
+        .log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff4444; }
+        .warning { color: #ffaa00; }
+        .info { color: #00aaff; }
+    </style>
+</head>
+<body>
+    <h1>🔊 Vercel 音效诊断工具</h1>
+    
+    <div class="test-section">
+        <h2>系统信息</h2>
+        <div id="systemInfo"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>测试1: 检查音频文件是否存在</h2>
+        <button onclick="checkAudioFiles()">检查文件</button>
+        <div id="fileCheckResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>测试2: 直接播放 bottom-sound.wav</h2>
+        <button onclick="playBottomSound()">播放音效</button>
+        <audio id="testAudio1" controls style="margin-top: 10px; width: 100%;"></audio>
+    </div>
+
+    <div class="test-section">
+        <h2>测试3: 直接播放 hero-sound.mp3</h2>
+        <button onclick="playHeroSound()">播放音效</button>
+        <audio id="testAudio2" controls style="margin-top: 10px; width: 100%;"></audio>
+    </div>
+
+    <div class="test-section">
+        <h2>测试4: 使用智能路径检测</h2>
+        <button onclick="testSmartPath()">测试智能路径</button>
+    </div>
+
+    <div class="test-section">
+        <h2>实时日志</h2>
+        <div class="log" id="consoleLog"></div>
+        <button onclick="clearLog()" style="margin-top: 10px;">清空日志</button>
+    </div>
+
+    <script>
+        // 自定义日志系统
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('consoleLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+
+        function clearLog() {
+            document.getElementById('consoleLog').innerHTML = '';
+        }
+
+        // 显示系统信息
+        function showSystemInfo() {
+            const info = {
+                'Hostname': window.location.hostname,
+                'Protocol': window.location.protocol,
+                'Origin': window.location.origin,
+                'Pathname': window.location.pathname,
+                'User Agent': navigator.userAgent.substring(0, 100) + '...'
+            };
+            
+            const infoDiv = document.getElementById('systemInfo');
+            infoDiv.innerHTML = Object.entries(info)
+                .map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`)
+                .join('');
+        }
+
+        // 获取智能音频路径
+        function getSmartAudioPath(filename) {
+            const hostname = window.location.hostname;
+            let path;
+            
+            if (hostname.includes('github.io')) {
+                path = `/FX-Travel-Jumbo-Interactive/assets/sounds/${filename}`;
+            } else if (hostname.includes('vercel.app') || hostname === 'localhost' || hostname === '127.0.0.1') {
+                path = `./assets/sounds/${filename}`;
+            } else {
+                path = `./assets/sounds/${filename}`;
+            }
+            
+            return { path, hostname };
+        }
+
+        // 测试1: 检查音频文件
+        async function checkAudioFiles() {
+            log('开始检查音频文件...', 'info');
+            const resultDiv = document.getElementById('fileCheckResult');
+            
+            const files = ['bottom-sound.wav', 'hero-sound.mp3'];
+            let results = [];
+            
+            for (const file of files) {
+                try {
+                    const { path } = getSmartAudioPath(file);
+                    const response = await fetch(path, { method: 'HEAD' });
+                    
+                    if (response.ok) {
+                        const size = response.headers.get('content-length');
+                        results.push(`<p class="success">✅ ${file}: 存在 (${(size/1024).toFixed(2)} KB)</p>`);
+                        log(`${file} 检查成功: ${path}`, 'success');
+                    } else {
+                        results.push(`<p class="error">❌ ${file}: 不存在 (HTTP ${response.status})</p>`);
+                        log(`${file} 检查失败: HTTP ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    results.push(`<p class="error">❌ ${file}: ${error.message}</p>`);
+                    log(`${file} 检查异常: ${error.message}`, 'error');
+                }
+            }
+            
+            resultDiv.innerHTML = results.join('');
+        }
+
+        // 测试2: 播放 bottom-sound.wav
+        function playBottomSound() {
+            log('尝试播放 bottom-sound.wav...', 'info');
+            
+            const { path, hostname } = getSmartAudioPath('bottom-sound.wav');
+            log(`使用路径: ${path}`, 'info');
+            log(`当前域名: ${hostname}`, 'info');
+            
+            const audio = document.getElementById('testAudio1');
+            audio.src = path;
+            
+            audio.addEventListener('canplaythrough', () => {
+                log('✅ 音频加载成功,开始播放', 'success');
+                audio.play().catch(error => {
+                    log(`❌ 播放失败: ${error.message}`, 'error');
+                });
+            });
+            
+            audio.addEventListener('error', (e) => {
+                log(`❌ 音频加载错误: ${audio.error ? audio.error.code : 'unknown'}`, 'error');
+                log(`错误详情: ${JSON.stringify(audio.error)}`, 'error');
+            });
+            
+            audio.load();
+        }
+
+        // 测试3: 播放 hero-sound.mp3
+        function playHeroSound() {
+            log('尝试播放 hero-sound.mp3...', 'info');
+            
+            const { path, hostname } = getSmartAudioPath('hero-sound.mp3');
+            log(`使用路径: ${path}`, 'info');
+            
+            const audio = document.getElementById('testAudio2');
+            audio.src = path;
+            
+            audio.addEventListener('canplaythrough', () => {
+                log('✅ 音频加载成功,开始播放', 'success');
+                audio.play().catch(error => {
+                    log(`❌ 播放失败: ${error.message}`, 'error');
+                });
+            });
+            
+            audio.addEventListener('error', (e) => {
+                log(`❌ 音频加载错误: ${audio.error ? audio.error.code : 'unknown'}`, 'error');
+            });
+            
+            audio.load();
+        }
+
+        // 测试4: 智能路径测试
+        function testSmartPath() {
+            log('=== 智能路径检测测试 ===', 'info');
+            
+            const testFiles = ['bottom-sound.wav', 'hero-sound.mp3'];
+            testFiles.forEach(file => {
+                const { path, hostname } = getSmartAudioPath(file);
+                log(`${file}:`, 'info');
+                log(`  域名: ${hostname}`, 'info');
+                log(`  路径: ${path}`, 'info');
+                log(`  完整URL: ${window.location.origin}${path.replace('./', '/')}`, 'info');
+            });
+            
+            alert('请查看日志输出');
+        }
+
+        // 页面加载时执行
+        window.addEventListener('load', () => {
+            showSystemInfo();
+            log('🚀 诊断工具已加载', 'success');
+            log(`📍 当前URL: ${window.location.href}`, 'info');
+        });
+    </script>
+</body>
+</html>
