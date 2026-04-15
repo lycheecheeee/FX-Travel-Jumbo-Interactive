@@ -2403,7 +2403,7 @@ details.animate-fade-in-up:hover {
           <line x1="2" y1="12" x2="22" y2="12"></line>
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
         </svg>
-        <span id="currentLangLabel" class="lang-label-desktop"></span>
+        <span id="currentLangLabel" class="lang-label-desktop" data-i18n="lang.zh-TW"></span>
         <span style="font-size:10px;opacity:0.6;" class="lang-arrow-desktop">▼</span>
       </button>
       
@@ -2412,9 +2412,9 @@ details.animate-fade-in-up:hover {
         <button class="lang-btn" data-lang="zh-HK" data-i18n="lang.zh-HK" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;"></button>
         <button class="lang-btn" data-lang="zh-TW" data-i18n="lang.zh-TW" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;"></button>
         <button class="lang-btn" data-lang="zh-CN" data-i18n="lang.zh-CN" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;"></button>
-        <button class="lang-btn" data-lang="en" data-i18n="lang.en" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;">English</button>
-        <button class="lang-btn" data-lang="ja" data-i18n="lang.ja" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;">日本語</button>
-        <button class="lang-btn" data-lang="ko" data-i18n="lang.ko" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;">한국어</button>
+        <button class="lang-btn" data-lang="en" data-i18n="lang.en" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;"></button>
+        <button class="lang-btn" data-lang="ja" data-i18n="lang.ja" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;"></button>
+        <button class="lang-btn" data-lang="ko" data-i18n="lang.ko" style="display:block;width:100%;text-align:left;background:transparent;border:none;color:white;padding:10px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;border-radius:8px;"></button>
         
         <!-- Divider -->
         <div style="height:1px;background:rgba(255,255,255,0.1);margin:8px 0;"></div>
@@ -2637,7 +2637,7 @@ details.animate-fade-in-up:hover {
   <video id="heroVideo" loop playsinline muted autoplay preload="auto" style="position:relative;z-index:2;max-width:min(95vw,1600px);width:auto;height:auto;max-height:85vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.3),0 0 100px rgba(123,47,190,0.2);background:transparent;object-fit:contain;">
     <source src="./assets/Section%201_Hero%20video/0_hero-video.mp4" type="video/mp4">
     <!-- Fallback message if video fails to load -->
-    <div style="color:white;text-align:center;padding:40px;">視頻加載中...</div>
+    <div style="color:white;text-align:center;padding:40px;" data-i18n="hero.video.loading">視頻加載中...</div>
   </video>
   
   <!-- Particle Container for Click Effects -->
@@ -2645,7 +2645,7 @@ details.animate-fade-in-up:hover {
   
   <!-- Jumbo Mascot in Hero Section - Right Side (Fixed to viewport, follows scroll) -->
   <div id="heroJumboMascot" style="position:fixed;bottom:clamp(80px,12vh,120px);right:clamp(15px,3vw,30px);cursor:pointer;transition:all 0.3s ease;z-index:9998;" data-animate>
-     <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif?v=3" alt="外遊象寶" loading="lazy" style="width:clamp(80px,15vw,180px);height:auto;filter:drop-shadow(0 10px 30px rgba(123,47,190,0.4));animation:jumboFloat 3s ease-in-out infinite;">
+     <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif?v=3" alt="外遊象寶吉祥物" loading="lazy" style="width:clamp(80px,15vw,180px);height:auto;filter:drop-shadow(0 10px 30px rgba(123,47,190,0.4));animation:jumboFloat 3s ease-in-out infinite;">
     
     <!-- Speech Bubble - Fixed to viewport, positioned relative to Jumbo -->
     <div id="heroSpeechBubble" style="position:fixed;bottom:clamp(220px,25vh,260px);right:clamp(15px,3vw,30px);pointer-events:auto;opacity:0;transform:scale(0.8) translateY(10px);transition:opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);animation:simpleFadeIn 0.5s ease-out 1s forwards;">
@@ -3173,10 +3173,10 @@ details.animate-fade-in-up:hover {
       
       <details class="animate-fade-in-up" data-animate style="background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:1px solid rgba(123,47,190,0.2);border-radius:16px;overflow:hidden;transition:border-color 0.3s ease, transform 0.3s ease;cursor:pointer;">
         <summary style="padding:clamp(20px,3vw,24px);font-weight:700;font-size:clamp(15px,2.5vw,17px);color:white;list-style:none;position:relative;display:flex;align-items:center;justify-content:space-between;">
-          <span>我的數據安唔安全？</span>
+          <span data-i18n="faq.q5">我的數據安唔安全？</span>
           <svg style="width:24px;height:24px;flex-shrink:0;transition:transform 0.3s;" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </summary>
-        <div style="padding:0 clamp(20px,3vw,24px) clamp(20px,3vw,24px);font-size:clamp(13px,2vw,15px);color:rgba(255,255,255,0.7);line-height:1.7;border-top:1px solid rgba(123,47,190,0.1);">絕對安全！所有數據都經過加密傳輸同儲存，我哋嚴肅對待私隱問題。你可以隨時喺設定內備份或刪除所有數據。</div>
+        <div style="padding:0 clamp(20px,3vw,24px) clamp(20px,3vw,24px);font-size:clamp(13px,2vw,15px);color:rgba(255,255,255,0.7);line-height:1.7;border-top:1px solid rgba(123,47,190,0.1);" data-i18n="faq.a5">絕對安全！所有數據都經過加密傳輸同儲存，我哋嚴肅對待私隱問題。你可以隨時喺設定內備份或刪除所有數據。</div>
       </details>
       
       <details class="animate-fade-in-up" data-animate style="background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border:1px solid rgba(123,47,190,0.2);border-radius:16px;overflow:hidden;transition:border-color 0.3s ease, transform 0.3s ease;cursor:pointer;">
@@ -7718,6 +7718,9 @@ headings.forEach(heading => {
     <div style="font-size:clamp(12px,1.5vw,14px);color:rgba(255,255,255,0.4);">© 2026 FX Travel Jumbo. All rights reserved.</div>
   </div>
 </footer>
+
+<!-- i18n Dynamic Translation System -->
+<script src="./js/i18n-dynamic.js"></script>
 
 </body>
 </html>

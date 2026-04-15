@@ -61,7 +61,10 @@ class I18nManager {
   /**
    * Initialize i18n system
    */
-  init() {
+  async init() {
+    // Load translations from JSON file
+    await this.loadTranslationsFromJSON();
+    
     // Set initial language
     this.setLanguage(this.currentLang, false);
     
@@ -69,6 +72,31 @@ class I18nManager {
     this.setupEventListeners();
     
     console.log(`[i18n] Initialized with language: ${this.currentLang}`);
+  }
+  
+  /**
+   * Load translations from translations.json
+   */
+  async loadTranslationsFromJSON() {
+    try {
+      const response = await fetch('./translations.json');
+      if (!response.ok) {
+        throw new Error(`Failed to load translations: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      // Merge all language translations
+      Object.keys(data).forEach(lang => {
+        if (!this.translations[lang]) {
+          this.translations[lang] = {};
+        }
+        Object.assign(this.translations[lang], data[lang]);
+      });
+      
+      console.log('[i18n] Translations loaded successfully');
+    } catch (error) {
+      console.error('[i18n] Failed to load translations:', error);
+    }
   }
   
   /**
