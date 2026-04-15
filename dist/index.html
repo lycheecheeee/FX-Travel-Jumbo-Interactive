@@ -188,8 +188,14 @@ svg {
 /* But keep SVGs inside interactive elements clickable */
 button svg,
 a svg,
-[onclick] svg {
-  pointer-events: auto;
+[onclick] svg,
+nav svg,
+.nav-actions svg,
+#langToggle svg,
+#mobileMenuBtn svg,
+.mobile-nav-link svg,
+#scrollTopBtn svg {
+  pointer-events: auto !important;
 }
 
 /* NAV */
@@ -444,6 +450,15 @@ nav {
   }
 }
 
+/* Desktop Default - Hide mobile mascot */
+#heroJumboMascotMobile {
+  display: none !important;
+}
+
+#heroSpeechBubbleMobileAlt {
+  display: none !important;
+}
+
 /* Tablet Responsive Adjustments (769px - 1024px) */
 @media (max-width: 1024px) and (min-width: 769px) {
   /* Hide desktop nav links on tablet to prevent overlap */
@@ -545,6 +560,26 @@ nav {
     stroke: #ffffff !important;
     fill: none !important;
     stroke-width: 2 !important;
+  }
+  
+  /* Mobile Jumbo Mascot - Show only on mobile */
+  #heroJumboMascotMobile {
+    display: block !important;
+  }
+  
+  /* Desktop Jumbo Mascot - Hide on mobile */
+  #heroJumboMascot {
+    display: none !important;
+  }
+  
+  /* Mobile Speech Bubble - Show only on mobile */
+  #heroSpeechBubbleMobileAlt {
+    display: block !important;
+  }
+  
+  /* Desktop Speech Bubble - Hide on mobile */
+  #heroSpeechBubble {
+    display: none !important;
   }
   
   /* Scroll to Top button - Mobile optimization */
@@ -2390,8 +2425,8 @@ details.animate-fade-in-up:hover {
   </div>
   <div class="nav-actions" style="display:flex;align-items:center;gap:clamp(8px,1.5vw,12px);flex-wrap:nowrap;">
     <!-- Language Selector -->
-    <div style="position:relative;margin-right:clamp(8px,1vw,16px);flex-shrink:0;z-index:1001;">
-      <button id="langToggle" style="background:none;border:none;color:white;cursor:pointer;padding:8px;display:flex;align-items:center;gap:6px;pointer-events:auto;z-index:1001;position:relative;transition:transform 0.3s ease,opacity 0.3s ease;font-size:13px;font-weight:600;" aria-label="選擇語言" data-i18n-aria="aria.lang.toggle">
+    <div style="position:relative;margin-right:clamp(8px,1vw,16px);flex-shrink:0;z-index:10000;">
+      <button id="langToggle" style="background:none;border:none;color:white;cursor:pointer;padding:8px;display:flex;align-items:center;gap:6px;pointer-events:auto !important;z-index:10000;position:relative;transition:transform 0.3s ease,opacity 0.3s ease;font-size:13px;font-weight:600;" aria-label="選擇語言" data-i18n-aria="aria.lang.toggle">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:auto;">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -2641,7 +2676,7 @@ details.animate-fade-in-up:hover {
   <div id="heroJumboMascot" style="position:fixed;bottom:clamp(80px,12vh,120px);right:clamp(15px,3vw,30px);cursor:pointer;transition:all 0.3s ease;z-index:9998;" data-animate>
      <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif?v=3" alt="Jumbo Mascot" loading="lazy" style="width:clamp(80px,15vw,180px);height:auto;filter:drop-shadow(0 10px 30px rgba(123,47,190,0.4));animation:jumboFloat 3s ease-in-out infinite;">
     
-    <!-- Speech Bubble - Fixed to viewport, positioned relative to Jumbo -->
+    <!-- Desktop Speech Bubble - Fixed to viewport, positioned relative to Jumbo -->
     <div id="heroSpeechBubble" style="position:fixed;bottom:clamp(220px,25vh,260px);right:clamp(15px,3vw,30px);pointer-events:auto;opacity:0;transform:scale(0.8) translateY(10px);transition:opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);animation:simpleFadeIn 0.5s ease-out 1s forwards;">
       <div style="background:#fff;border:2px solid #7B2FBE;border-radius:12px;padding:10px 16px;min-width:200px;text-align:center;box-shadow:0 4px 15px rgba(123,47,190,0.15);">
         <div data-i18n="hero.jumbo.greeting1" style="font-size:14px;font-weight:700;color:#7B2FBE;margin-bottom:4px;"></div>
@@ -2649,6 +2684,31 @@ details.animate-fade-in-up:hover {
         
         <!-- Arrow pointing down -->
         <div style="position:absolute;bottom:-8px;left:50%;margin-left:-8px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid #7B2FBE;"></div>
+      </div>
+    </div>
+    
+    <!-- Mobile Speech Bubble - Random phrases that cycle on click/timer -->
+    <div id="heroSpeechBubbleMobile" style="position:fixed;bottom:calc(clamp(80px,12vh,120px) + 190px);right:clamp(15px,3vw,30px);pointer-events:auto;opacity:0;transform:scale(0.8) translateY(10px);transition:opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);display:none;">
+      <div style="background:#fff;border:2px solid #7B2FBE;border-radius:12px;padding:10px 16px;min-width:180px;max-width:220px;text-align:center;box-shadow:0 4px 15px rgba(123,47,190,0.15);font-size:14px;">
+        <div id="mobileMascotPhrase" data-i18n="mascot.mobile.line1" style="color:#1a1a1a;font-weight:500;letter-spacing:0.2px;"></div>
+        
+        <!-- Arrow pointing down -->
+        <div style="position:absolute;bottom:-6px;left:50%;margin-left:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid #7B2FBE;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile Jumbo Mascot - Alternative position for mobile devices -->
+  <div id="heroJumboMascotMobile" style="position:fixed;bottom:120px;right:15px;cursor:pointer;transition:all 0.3s ease;z-index:9998;">
+     <img src="./assets/jumbo-gif/jumbo-wave-transparent.gif?v=3" alt="Jumbo Mascot Mobile" loading="lazy" style="width:clamp(60px,10vw,100px);height:auto;filter:drop-shadow(0 8px 20px rgba(123,47,190,0.4));animation:jumboFloat 3s ease-in-out infinite;">
+    
+    <!-- Mobile Speech Bubble - Positioned below mascot -->
+    <div id="heroSpeechBubbleMobileAlt" style="position:fixed;bottom:120px;right:calc(15px + 100px + 15px);min-width:160px;pointer-events:auto;opacity:1;transform:scale(1) translateX(10px);transition:opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+      <div style="background:#fff;border:2px solid #7B2FBE;border-radius:12px;padding:8px 12px;text-align:center;box-shadow:0 4px 15px rgba(123,47,190,0.15);font-size:13px;max-width:180px;">
+        <div id="mobileMascotPhraseAlt" data-i18n="mascot.mobile.line1" style="color:#1a1a1a;font-weight:500;letter-spacing:0.2px;"></div>
+        
+        <!-- Arrow pointing left to mascot -->
+        <div style="position:absolute;top:50%;left:-6px;margin-top:-6px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:6px solid #7B2FBE;"></div>
       </div>
     </div>
   </div>
@@ -3025,6 +3085,9 @@ details.animate-fade-in-up:hover {
     
     <!-- Currency Scroll Container -->
     <div style="position:relative;margin-top:20px;">
+      <!-- Left Mask Blur Overlay -->
+      <div style="position:absolute;left:0;top:0;bottom:0;width:80px;background:linear-gradient(to right,rgba(15,15,35,1) 0%,rgba(15,15,35,0.8) 30%,rgba(15,15,35,0.4) 60%,transparent 100%);z-index:15;pointer-events:none;"></div>
+      
       <!-- Auto-scroll Hint Text - Enhanced for mobile -->
       <div style="text-align:center;margin-bottom:16px;font-size:clamp(14px,2vw,16px);color:rgba(255,255,255,0.8);font-weight:600;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:8px;" data-i18n="currency.scroll.hint">
         <span style="display:inline-block;animation:swipeHint 1.5s ease-in-out infinite;">👈</span>
@@ -7688,7 +7751,7 @@ headings.forEach(heading => {
 </script>
 
 <!-- Scroll to Top Button -->
-<button id="scrollTopBtn" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg, var(--purple), var(--pink));color:white;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(123,47,190,0.4);z-index:999;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;padding:0;">
+<button id="scrollTopBtn" style="position:fixed;bottom:30px;right:30px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg, var(--purple), var(--pink));color:white;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(123,47,190,0.4);z-index:999;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;padding:0;pointer-events:auto !important;">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="18 15 12 9 6 15" fill="none" stroke="#ffffff" stroke-width="2"></polyline>
   </svg>
@@ -7714,7 +7777,229 @@ headings.forEach(heading => {
 </footer>
 
 <!-- i18n Dynamic Translation System -->
-<script src="./js/i18n-dynamic.js"></script>
+<script>
+// Ensure i18n initializes after DOM is fully loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const script = document.createElement('script');
+    script.src = './js/i18n-dynamic.js';
+    document.body.appendChild(script);
+    
+    // Show navigation bar immediately
+    setTimeout(() => {
+      const nav = document.getElementById('mainNav');
+      if (nav) {
+        nav.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        nav.style.opacity = '1';
+        nav.style.transform = 'translateX(-50%) translateY(0)';
+      }
+    }, 100);
+  });
+} else {
+  const script = document.createElement('script');
+  script.src = './js/i18n-dynamic.js';
+  document.body.appendChild(script);
+  
+  // Show navigation bar immediately
+  setTimeout(() => {
+    const nav = document.getElementById('mainNav');
+    if (nav) {
+      nav.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      nav.style.opacity = '1';
+      nav.style.transform = 'translateX(-50%) translateY(0)';
+    }
+  }, 100);
+}
+</script>
+
+<!-- Debug: Verify button clickability -->
+<script>
+(function() {
+  'use strict';
+  
+  // Wait for all scripts to load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const langToggle = document.getElementById('langToggle');
+      const scrollTopBtn = document.getElementById('scrollTopBtn');
+      
+      console.log('[Button Debug] === Button Status Check ===');
+      
+      if (langToggle) {
+        const computedStyle = window.getComputedStyle(langToggle);
+        console.log('[Button Debug] #langToggle:', {
+          exists: true,
+          pointerEvents: computedStyle.pointerEvents,
+          zIndex: computedStyle.zIndex,
+          display: computedStyle.display,
+          visibility: computedStyle.visibility,
+          opacity: computedStyle.opacity,
+          cursor: computedStyle.cursor,
+          hasClickListeners: getEventListeners ? getEventListeners(langToggle).click?.length > 0 : 'unknown'
+        });
+      } else {
+        console.error('[Button Debug] #langToggle NOT FOUND!');
+      }
+      
+      if (scrollTopBtn) {
+        const computedStyle = window.getComputedStyle(scrollTopBtn);
+        console.log('[Button Debug] #scrollTopBtn:', {
+          exists: true,
+          pointerEvents: computedStyle.pointerEvents,
+          zIndex: computedStyle.zIndex,
+          display: computedStyle.display,
+          visibility: computedStyle.visibility,
+          opacity: computedStyle.opacity,
+          cursor: computedStyle.cursor,
+          hasClickListeners: getEventListeners ? getEventListeners(scrollTopBtn).click?.length > 0 : 'unknown'
+        });
+      } else {
+        console.error('[Button Debug] #scrollTopBtn NOT FOUND!');
+      }
+      
+      // Test: Add visual feedback on click
+      if (langToggle) {
+        langToggle.addEventListener('click', () => {
+          console.log('[Button Debug] ✅ #langToggle CLICKED!');
+        }, { once: false });
+      }
+      
+      if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', () => {
+          console.log('[Button Debug] ✅ #scrollTopBtn CLICKED!');
+        }, { once: false });
+      }
+      
+      console.log('[Button Debug] === End Status Check ===');
+    }, 500);
+  });
+})();
+</script>
+
+<!-- Mobile Jumbo Mascot - Random Phrases Logic -->
+<script>
+(function() {
+  'use strict';
+  
+  // Mobile mascot phrases (will be populated by i18n)
+  const mobilePhrases = [
+    'mascot.mobile.line1',
+    'mascot.mobile.line2',
+    'mascot.mobile.line3'
+  ];
+  
+  let currentPhraseIndex = 0;
+  let phraseRotationInterval = null;
+  
+  // Function to update phrase with animation
+  function updateMascotPhrase(newIndex) {
+    const phraseEl1 = document.getElementById('mobileMascotPhrase');
+    const phraseEl2 = document.getElementById('mobileMascotPhraseAlt');
+    
+    if (!phraseEl1 || !phraseEl2) return;
+    
+    // Fade out
+    phraseEl1.style.transition = 'opacity 0.3s ease';
+    phraseEl2.style.transition = 'opacity 0.3s ease';
+    phraseEl1.style.opacity = '0';
+    phraseEl2.style.opacity = '0';
+    
+    setTimeout(() => {
+      // Update text content via i18n
+      const newKey = mobilePhrases[newIndex];
+      
+      // Check if i18n system is available
+      if (window.i18n && window.i18n.translations) {
+        const lang = window.i18n.currentLang || 'zh-TW';
+        const translation = window.i18n.translations[lang]?.[newKey] || newKey;
+        phraseEl1.textContent = translation;
+        phraseEl2.textContent = translation;
+      } else {
+        // Fallback: use data-i18n attribute
+        phraseEl1.setAttribute('data-i18n', newKey);
+        phraseEl2.setAttribute('data-i18n', newKey);
+        
+        // Try to get from translations.json directly
+        fetch('./translations.json')
+          .then(res => res.json())
+          .then(data => {
+            const lang = document.documentElement.lang || 'zh-TW';
+            const translation = data[lang]?.[newKey] || newKey;
+            phraseEl1.textContent = translation;
+            phraseEl2.textContent = translation;
+          })
+          .catch(err => {
+            console.warn('[Mascot] Failed to load translations:', err);
+            phraseEl1.textContent = newKey;
+            phraseEl2.textContent = newKey;
+          });
+      }
+      
+      // Fade in
+      setTimeout(() => {
+        phraseEl1.style.opacity = '1';
+        phraseEl2.style.opacity = '1';
+      }, 50);
+    }, 300);
+    
+    currentPhraseIndex = newIndex;
+  }
+  
+  // Function to rotate to next phrase
+  function rotateToNextPhrase() {
+    const nextIndex = (currentPhraseIndex + 1) % mobilePhrases.length;
+    updateMascotPhrase(nextIndex);
+  }
+  
+  // Initialize on DOM ready
+  function initMobileMascot() {
+    const mascotMobile = document.getElementById('heroJumboMascotMobile');
+    
+    if (!mascotMobile) {
+      console.log('[Mascot] Mobile mascot not found, skipping initialization');
+      return;
+    }
+    
+    console.log('[Mascot] Initializing mobile mascot with random phrases');
+    
+    // Set initial random phrase
+    const initialIndex = Math.floor(Math.random() * mobilePhrases.length);
+    updateMascotPhrase(initialIndex);
+    
+    // Add click handler to change phrase
+    mascotMobile.addEventListener('click', () => {
+      console.log('[Mascot] Mascot clicked, changing phrase');
+      rotateToNextPhrase();
+      
+      // Add bounce animation
+      mascotMobile.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        mascotMobile.style.transform = 'scale(1)';
+      }, 200);
+    });
+    
+    // Auto-rotate every 8 seconds
+    phraseRotationInterval = setInterval(rotateToNextPhrase, 8000);
+    
+    console.log('[Mascot] Mobile mascot initialized successfully');
+  }
+  
+  // Wait for DOM and i18n to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMascot);
+  } else {
+    // DOM already loaded
+    setTimeout(initMobileMascot, 100);
+  }
+  
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    if (phraseRotationInterval) {
+      clearInterval(phraseRotationInterval);
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
