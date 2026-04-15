@@ -7907,33 +7907,35 @@ if (document.readyState === 'loading') {
     setTimeout(() => {
       // Update text content via i18n
       const newKey = mobilePhrases[newIndex];
+      let translation = newKey; // Default fallback
       
-      // Check if i18n system is available
-      if (window.i18n && window.i18n.translations) {
-        const lang = window.i18n.currentLang || 'zh-TW';
-        const translation = window.i18n.translations[lang]?.[newKey] || newKey;
-        phraseEl1.textContent = translation;
-        phraseEl2.textContent = translation;
-      } else {
-        // Fallback: use data-i18n attribute
-        phraseEl1.setAttribute('data-i18n', newKey);
-        phraseEl2.setAttribute('data-i18n', newKey);
-        
-        // Try to get from translations.json directly
-        fetch('./translations.json')
-          .then(res => res.json())
-          .then(data => {
-            const lang = document.documentElement.lang || 'zh-TW';
-            const translation = data[lang]?.[newKey] || newKey;
-            phraseEl1.textContent = translation;
-            phraseEl2.textContent = translation;
-          })
-          .catch(err => {
-            console.warn('[Mascot] Failed to load translations:', err);
-            phraseEl1.textContent = newKey;
-            phraseEl2.textContent = newKey;
-          });
+      // Priority 1: Use window.i18n API if available
+      if (window.i18n && window.i18n.getTranslation) {
+        translation = window.i18n.getTranslation(newKey);
+        console.log('[Mascot] Using i18n API:', translation);
       }
+      // Priority 2: Direct access to translations object
+      else if (window.i18n && window.i18n.translations) {
+        const lang = window.i18n.currentLang || 'zh-TW';
+        translation = window.i18n.translations[lang]?.[newKey] || newKey;
+        console.log('[Mascot] Using i18n.translations:', translation);
+      }
+      // Priority 3: Synchronous fetch (cached)
+      else {
+        // Try to use cached translations from previous fetch
+        if (window._cachedTranslations) {
+          const lang = document.documentElement.lang || 'zh-TW';
+          translation = window._cachedTranslations[lang]?.[newKey] || newKey;
+          console.log('[Mascot] Using cached translations:', translation);
+        } else {
+          // Last resort: fetch synchronously (not ideal but works)
+          console.warn('[Mascot] i18n not ready, using key as fallback:', newKey);
+        }
+      }
+      
+      // Update both elements
+      phraseEl1.textContent = translation;
+      phraseEl2.textContent = translation;
       
       // Fade in
       setTimeout(() => {
@@ -7962,6 +7964,31 @@ if (document.readyState === 'loading') {
     
     console.log('[Mascot] Initializing mobile mascot with random phrases');
     
+    // Pre-load translations if i18n is not ready
+    if (!window.i18n || !window.i18n.translations) {
+      console.log('[Mascot] i18n not ready, pre-loading translations...');
+      fetch('./translations.json')
+        .then(res => res.json())
+        .then(data => {
+          window._cachedTranslations = data;
+          console.log('[Mascot] Translations pre-loaded successfully');
+          
+          // Now initialize with loaded translations
+          initializeMascotWithTranslations(mascotMobile);
+        })
+        .catch(err => {
+          console.error('[Mascot] Failed to pre-load translations:', err);
+          // Still initialize but will show keys
+          initializeMascotWithTranslations(mascotMobile);
+        });
+    } else {
+      // i18n is ready, initialize directly
+      initializeMascotWithTranslations(mascotMobile);
+    }
+  }
+  
+  // Helper function to initialize mascot after translations are ready
+  function initializeMascotWithTranslations(mascotMobile) {
     // Set initial random phrase
     const initialIndex = Math.floor(Math.random() * mobilePhrases.length);
     updateMascotPhrase(initialIndex);
