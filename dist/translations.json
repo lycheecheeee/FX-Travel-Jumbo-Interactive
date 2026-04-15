@@ -71,6 +71,16 @@
     "faq.q6": "象寶有其他語言版本嗎？",
     "faq.a6": "象寶目前只有繁體中文版本！不過簡體中文、英文等多語言版本正在研發當中，大家敬請期待。",
     "footer.tagline": "旅行記賬分賬 · 即時匯率換算 · 到價提示",
+    "footer.copyright": "© 2026 FX Travel Jumbo. All rights reserved.",
+    
+    "aria.lang.toggle": "選擇語言",
+    "aria.menu.open": "開啟選單",
+    "aria.menu.close": "關閉選單",
+    "aria.download.app": "免費下載外遊象寶App",
+    "aria.volume.toggle": "切換背景音樂開關",
+    "alt.ocr.photo": "OCR 拍照翻譯",
+    "alt.group.split": "多人分賬",
+    "alt.smart.record": "智能記帳",
     
     "other.fps.title": "FPS 轉數快結算",
     "other.fps.desc": "一鍵生成個人 FPS 二維碼，或掃描朋友二維碼，即時完成分帳轉賬。旅行後快速結清，安全又便捷。",
@@ -145,6 +155,15 @@
     "faq.q6": "象寶有其他語言版本嗎？",
     "faq.a6": "象寶目前只有繁體中文版本！不過簡體中文、英文等多語言版本正在研發當中，大家敬請期待。",
     "footer.tagline": "旅行記賬分賬 · 即時匯率換算 · 到價提示",
+    "footer.copyright": "© 2026 FX Travel Jumbo. All rights reserved.",
+    "aria.lang.toggle": "選擇語言",
+    "aria.menu.open": "開啟選單",
+    "aria.menu.close": "關閉選單",
+    "aria.download.app": "免費下載外遊象寶App",
+    "aria.volume.toggle": "切換背景音樂開關",
+    "alt.ocr.photo": "OCR 拍照翻譯",
+    "alt.group.split": "多人分賬",
+    "alt.smart.record": "智能記帳",
     "other.fps.title": "轉數快快速結算",
     "other.fps.desc": "一鍵生成或掃描轉數快二維碼，輕鬆完成轉賬收款，快捷安全解決旅行結算問題。",
     "other.daily.title": "日常記帳",
@@ -171,7 +190,16 @@
     "other.daily.desc": "不仅限于旅行，日常消费同样适用。个人记账、朋友聚餐 AA 制，一站式管理所有财务记录，让每一笔支出清晰有序。",
     "cta.jumbo.greeting": "出发啦",
     "cta.jumbo.message": "带我去环游世界吧",
-    "footer.tagline": "旅行记账分账 · 实时汇率换算 · 到价提示"
+    "footer.tagline": "旅行记账分账 · 实时汇率换算 · 到价提示",
+    "footer.copyright": "© 2026 FX Travel Jumbo. All rights reserved.",
+    "aria.lang.toggle": "选择语言",
+    "aria.menu.open": "开启菜单",
+    "aria.menu.close": "关闭菜单",
+    "aria.download.app": "免费下载外游象宝App",
+    "aria.volume.toggle": "切换背景音乐开关",
+    "alt.ocr.photo": "OCR 拍照翻译",
+    "alt.group.split": "多人分账",
+    "alt.smart.record": "智能记账"
   },
   "en": {
     "brand.name": "FX Travel Jumbo",
@@ -192,7 +220,16 @@
     "other.daily.desc": "Not just for travel—perfect for daily spending too. Manage personal expenses and group splits all in one place, keeping every transaction clear and organized.",
     "cta.jumbo.greeting": "Let's Go!",
     "cta.jumbo.message": "Take me around the world!",
-    "footer.tagline": "Travel Expense Splitting · Real-time Exchange Rates · Rate Alerts"
+    "footer.tagline": "Travel Expense Splitting · Real-time Exchange Rates · Rate Alerts",
+    "footer.copyright": "© 2026 FX Travel Jumbo. All rights reserved.",
+    "aria.lang.toggle": "Select Language",
+    "aria.menu.open": "Open Menu",
+    "aria.menu.close": "Close Menu",
+    "aria.download.app": "Download FX Travel Jumbo App for Free",
+    "aria.volume.toggle": "Toggle Background Music",
+    "alt.ocr.photo": "OCR Photo Translation",
+    "alt.group.split": "Group Expense Splitting",
+    "alt.smart.record": "Smart Expense Recording"
   },
   "ja": {
     "brand.name": "FX トラベル ジャンボ",
@@ -213,7 +250,16 @@
     "other.daily.desc": "旅行だけでなく、日常の消費にも最適。個人の記帳やグループでの割り勘を一元管理し、すべての取引を明確に整理。",
     "cta.jumbo.greeting": "出発！",
     "cta.jumbo.message": "世界中を旅しましょう！",
-    "footer.tagline": "旅行経費の分割 · リアルタイム為替換算 · レート通知"
+    "footer.tagline": "旅行経費の分割 · リアルタイム為替換算 · レート通知",
+    "footer.copyright": "© 2026 FX Travel Jumbo. All rights reserved.",
+    "aria.lang.toggle": "言語を選択",
+    "aria.menu.open": "メニューを開く",
+    "aria.menu.close": "メニューを閉じる",
+    "aria.download.app": "FX トラベル ジャンボ App を無料ダウンロード",
+    "aria.volume.toggle": "バックグラウンドミュージックの切り替え",
+    "alt.ocr.photo": "OCR 写真翻訳",
+    "alt.group.split": "グループ経費精算",
+    "alt.smart.record": "スマート記帳"
   },
   "ko": {
     "brand.name": "FX 트래블 점보",
@@ -234,6 +280,15 @@
     "other.daily.desc": "여행뿐만 아니라 일상 소비에도 최적. 개인 가계부 및 그룹 분할 결제를 한 곳에서 관리하여 모든 거래를 명확하게 정리.",
     "cta.jumbo.greeting": "출발!",
     "cta.jumbo.message": "전 세계를 여행해요!",
-    "footer.tagline": "여행 경비 분할 · 실시간 환율 계산 · 환율 알림"
+    "footer.tagline": "여행 경비 분할 · 실시간 환율 계산 · 환율 알림",
+    "footer.copyright": "© 2026 FX Travel Jumbo. All rights reserved.",
+    "aria.lang.toggle": "언어 선택",
+    "aria.menu.open": "메뉴 열기",
+    "aria.menu.close": "메뉴 닫기",
+    "aria.download.app": "FX 트래블 점보 App 무료 다운로드",
+    "aria.volume.toggle": "배경 음악 전환",
+    "alt.ocr.photo": "OCR 사진 번역",
+    "alt.group.split": "그룹 경비 정산",
+    "alt.smart.record": "스마트 가계부"
   }
 }
