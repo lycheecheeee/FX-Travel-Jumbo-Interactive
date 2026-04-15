@@ -144,6 +144,7 @@ const translations = {
     'hero.cta': 'Try Now',
     'jumbo.msg.0.greeting': '👋 Hello!',
     'jumbo.msg.0.message': 'Your travel finance buddy'
+  },
   'ja': {
     'brand.name': 'FX トラベル ジャンボ',
     'lang.zh-TW': '繁體中文',

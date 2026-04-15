@@ -87,7 +87,11 @@
     "other.daily.title": "日常開支管理",
     "other.daily.desc": "不僅限於旅行，日常消費同樣適用。個人記帳、朋友聚餐 AA 制，一站式管理所有財務記錄，讓每一筆支出清晰有序。",
     "cta.jumbo.greeting": "出發了",
-    "cta.jumbo.message": "帶我去環遊世界吧"
+    "cta.jumbo.message": "帶我去環遊世界吧",
+    
+    "mascot.mobile.line1": "帶埋我出發啦！",
+    "mascot.mobile.line2": "行得未呀？",
+    "mascot.mobile.line3": "仲等？機會唔等人"
   },
   "zh-HK": {
     "brand.name": "外遊象寶",
@@ -169,7 +173,11 @@
     "other.daily.title": "日常記帳",
     "other.daily.desc": "唔止旅行適用，日常消費、朋友聚餐分賬都能輕鬆管理，財務記錄簡單有序。",
     "cta.jumbo.greeting": "出發喇",
-    "cta.jumbo.message": "帶埋我去環遊世界啦"
+    "cta.jumbo.message": "帶埋我去環遊世界啦",
+    
+    "mascot.mobile.line1": "帶埋我出發啦！",
+    "mascot.mobile.line2": "行得未呀？",
+    "mascot.mobile.line3": "仲等？機會唔等人"
   },
   "zh-CN": {
     "brand.name": "外游象宝",
