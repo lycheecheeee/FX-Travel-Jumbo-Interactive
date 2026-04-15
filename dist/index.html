@@ -518,8 +518,22 @@ nav {
   #heroVolumeToggle {
     bottom: 20px !important; /* Lower position to avoid overlap with App Icon */
     left: 15px !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: 44px !important;
+    height: 44px !important;
+    z-index: 10000 !important; /* Ensure above all content */
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    display: flex !important; /* Force visible on mobile */
+  }
+  
+  /* Scroll to Top button - Mobile optimization */
+  #scrollTopBtn {
+    bottom: 20px !important;
+    right: 15px !important;
+    width: 44px !important;
+    height: 44px !important;
+    z-index: 10000 !important; /* Ensure above all content */
+    box-shadow: 0 4px 20px rgba(123,47,190,0.6) !important;
   }
   
   /* Show Jumbo mascot on all devices - Fixed to viewport (follows scroll) */
@@ -533,10 +547,8 @@ nav {
   }
   
   /* Hide Jumbo mascot on mobile devices */
-  @media (max-width: 768px) {
-    #heroJumboMascot {
-      display: none !important;
-    }
+  #heroJumboMascot {
+    display: none !important;
   }
   
   #heroJumboMascot img {
@@ -960,10 +972,8 @@ nav {
   }
   
   /* Hide CTA Jumbo mascot on mobile */
-  @media (max-width: 768px) {
-    #ctaJumboMascot {
-      display: none !important;
-    }
+  #ctaJumboMascot {
+    display: none !important;
   }
   
   #ctaJumboMascot {
