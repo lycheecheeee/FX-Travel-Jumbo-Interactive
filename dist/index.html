@@ -203,7 +203,8 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 32px rgba(123,47,190,0.3), 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 100;
+  z-index: 10000;
+  pointer-events: auto;
 }
 .nav-logo { display: flex; align-items: center; gap: clamp(8px, 2vw, 10px); }
 .nav-logo img { width: clamp(36px, 5vw, 40px); height: clamp(36px, 5vw, 40px); border-radius: 22%; }
@@ -2377,13 +2378,13 @@ details.animate-fade-in-up:hover {
 <div class="mesh-orb" style="position:fixed;top:40%;left:50%;width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,0.3) 0%,transparent 70%);filter:blur(90px);animation:orbFloat3 22s ease-in-out infinite;z-index:-2;pointer-events:none;"></div>
 
 <!-- NAV - Hidden on first screen, appears from second screen -->
-<nav id="mainNav" style="position:fixed;top:clamp(12px,2vh,16px);left:50%;transform:translateX(-50%) translateY(-20px);width:min(95%,1200px);background:rgba(10,10,15,0.6);border:1px solid rgba(123,47,190,0.15);border-radius:999px;padding:0 clamp(20px,4vw,32px);height:clamp(52px,7vh,60px);display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 32px rgba(123,47,190,0.15),0 2px 8px rgba(0,0,0,0.1);opacity:0;transition:none;z-index:100;backdrop-filter:blur(20px) saturate(180%);">
+<nav id="mainNav" style="position:fixed;top:clamp(12px,2vh,16px);left:50%;transform:translateX(-50%) translateY(-20px);width:min(95%,1200px);background:rgba(10,10,15,0.6);border:1px solid rgba(123,47,190,0.15);border-radius:999px;padding:0 clamp(20px,4vw,32px);height:clamp(52px,7vh,60px);display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 32px rgba(123,47,190,0.15),0 2px 8px rgba(0,0,0,0.1);opacity:0;transition:none;z-index:10000;backdrop-filter:blur(20px) saturate(180%);pointer-events:auto;">
   <!-- UAT Badge -->
   <div style="position:absolute;top:-8px;right:-8px;background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:white;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:1px;box-shadow:0 4px 12px rgba(255,107,107,0.4);z-index:101;animation:pulse 2s ease-in-out infinite;">UAT</div>
   
   <div class="nav-logo">
-    <a href="https://apps.apple.com/app/fx-travel-jumbo" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;text-decoration:none;transition:transform 0.3s ease;">
-      <img src="./assets/app-icon/app-icon-new.png" alt="FX Travel Jumbo - App Store" width="40" height="40" loading="lazy" decoding="async" style="cursor:pointer;">
+    <a href="https://apps.apple.com/app/fx-travel-jumbo" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;text-decoration:none;transition:transform 0.3s ease;pointer-events:auto;">
+      <img src="./assets/app-icon/app-icon-new.png" alt="FX Travel Jumbo - App Store" width="40" height="40" loading="lazy" decoding="async" style="cursor:pointer;pointer-events:auto;">
     </a>
     <div class="nav-logo-text" data-i18n="brand.name"></div>
   </div>
@@ -2423,12 +2424,12 @@ details.animate-fade-in-up:hover {
     </div>
     
     <!-- Navigation Links - Hidden on tablet/mobile -->
-    <div class="nav-links" style="display:flex;gap:clamp(28px,4vw,50px);align-items:center;">
-      <a href="#appIntro" class="nav-link spring-transition" data-i18n="nav.about" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;"></a>
-      <a href="#coreFeatures" class="nav-link spring-transition" data-i18n="nav.features" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;"></a>
-      <a href="#currencies" class="nav-link spring-transition" data-i18n="nav.currencies" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;"></a>
-      <a href="#howToUse" class="nav-link spring-transition" data-i18n="nav.tutorial" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;"></a>
-      <a href="#faq" class="nav-link spring-transition" data-i18n="nav.faq" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;"></a>
+    <div class="nav-links" style="display:flex;gap:clamp(28px,4vw,50px);align-items:center;pointer-events:auto;">
+      <a href="#appIntro" class="nav-link spring-transition" data-i18n="nav.about" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;pointer-events:auto;"></a>
+      <a href="#coreFeatures" class="nav-link spring-transition" data-i18n="nav.features" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;pointer-events:auto;"></a>
+      <a href="#currencies" class="nav-link spring-transition" data-i18n="nav.currencies" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;pointer-events:auto;"></a>
+      <a href="#howToUse" class="nav-link spring-transition" data-i18n="nav.tutorial" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;pointer-events:auto;"></a>
+      <a href="#faq" class="nav-link spring-transition" data-i18n="nav.faq" style="color:rgba(255,255,255,0.8);text-decoration:none;font-size:clamp(12px,1.5vw,15px);font-weight:600;position:relative;white-space:nowrap;pointer-events:auto;"></a>
     </div>
     
     <!-- Mobile Menu Button -->
@@ -2440,7 +2441,7 @@ details.animate-fade-in-up:hover {
       </svg>
     </button>
     
-    <a href="https://apps.apple.com/app/fx-travel-jumbo" target="_blank" rel="noopener noreferrer" class="nav-cta" aria-label="免費下載外遊象寶App" data-i18n-aria="aria.download.app" style="flex-shrink:0;white-space:nowrap;" data-i18n="nav.download"></a>
+    <a href="https://apps.apple.com/app/fx-travel-jumbo" target="_blank" rel="noopener noreferrer" class="nav-cta" aria-label="免費下載外遊象寶App" data-i18n-aria="aria.download.app" style="flex-shrink:0;white-space:nowrap;pointer-events:auto;" data-i18n="nav.download"></a>
   </div>
 </nav>
 
