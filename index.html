@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <title>[V2]外遊象寶 FX Travel Jumbo - 旅行記賬分帳 · 即時匯率換算</title>
-<meta name="description" content="FX Travel Jumbo 外遊象寶 - OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta name="description" content="FX Travel Jumbo 外遊象寶 - OCR即拍即換算、智能多人分帳、即時匯率追蹤，一App搞定所有旅行財務">
 <meta name="theme-color" content="#7B2FBE">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://fxtraveljumbo.com/">
 <meta property="og:title" content="外遊象寶 FX Travel Jumbo — 旅行記賬分帳 · 即時匯率換算">
-<meta property="og:description" content="OCR即影即換算、智能多人分帳、即時匯率追蹤,一App搞掂所有旅行財務">
+<meta property="og:description" content="OCR即拍即換算、智能多人分帳、即時匯率追蹤，一App搞定所有旅行財務">
 <meta property="og:image" content="./assets/app-icon/app-icon-new.png">
 
 <!-- Twitter -->
@@ -746,15 +746,9 @@ footer {
   .custom-cursor, .cursor-dot { display: none; }
   body { cursor: auto; }
   
+  /* Hide jumbo mascot on mobile */
   .jumbo-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 100;
-  }
-  
-  .jumbo-mascot img {
-    width: 80px;
+    display: none;
   }
   
   .currency-grid {
@@ -846,8 +840,8 @@ footer {
 <section class="feature-section" id="appIntro" style="background:var(--dark);">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">專為旅人設計的財務管理App</h2>
-      <p class="section-desc">從出發前換錢到回程後結帳，全程陪你。</p>
+      <h2 class="section-title" data-i18n="appIntro.title">專為旅人設計的財務管理App</h2>
+      <p class="section-desc" data-i18n="appIntro.desc">從出發前換錢到回程後結帳，全程陪伴您。</p>
     </div>
   </div>
 </section>
@@ -855,34 +849,34 @@ footer {
 <section class="feature-section" id="coreFeatures">
   <div class="container">
     <div class="section-header">
-      <div class="section-subtitle">核心功能</div>
-      <h2 class="section-title">你需要的，象寶都有</h2>
-      <p class="section-desc">專為旅人設計的財務管理App，從出發前換錢到回程後結帳，全程陪你。</p>
+      <div class="section-subtitle" data-i18n="coreFeatures.subtitle">核心功能</div>
+      <h2 class="section-title" data-i18n="coreFeatures.title">您需要的，象寶都有</h2>
+      <p class="section-desc" data-i18n="coreFeatures.desc">專為旅人設計的財務管理App，從出發前換錢到回程後結帳，全程陪伴您。</p>
     </div>
     
     <div class="feature-grid">
       <div class="feature-card">
         <div style="font-size:48px;margin-bottom:16px;">📸</div>
-        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">OCR 拍照翻譯</h3>
-        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">對住收據拍張相，即刻自動識別金額同貨幣，唔使手動輸入。</p>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;" data-i18n="feature.ocr.title">OCR 拍照翻譯</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="feature.ocr.desc">對著收據拍照，立即自動識別金額與貨幣，無需手動輸入。</p>
       </div>
       
       <div class="feature-card">
         <div style="font-size:48px;margin-bottom:16px;">👥</div>
-        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">多人分賬</h3>
-        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">建立旅行群組，自動計算每人應付金額，公平又簡單。</p>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;" data-i18n="feature.split.title">多人分帳</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="feature.split.desc">建立旅行群組，自動計算每人應付金額，公平又簡單。</p>
       </div>
       
       <div class="feature-card">
         <div style="font-size:48px;margin-bottom:16px;">💱</div>
-        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">即時匯率</h3>
-        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">支援17種貨幣，實時更新匯率，隨時知道最準確嘅兌換比例。</p>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;" data-i18n="feature.rate.title">即時匯率</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="feature.rate.desc">支援17種貨幣，實時更新匯率，隨時知道最準確的兌換比例。</p>
       </div>
       
       <div class="feature-card">
         <div style="font-size:48px;margin-bottom:16px;">📊</div>
-        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;">智能記帳</h3>
-        <p style="color:rgba(255,255,255,0.7);line-height:1.6;">自動分類支出，生成視覺化報表，清晰掌握旅行預算。</p>
+        <h3 style="font-size:24px;font-weight:800;margin-bottom:12px;" data-i18n="feature.accounting.title">智能記帳</h3>
+        <p style="color:rgba(255,255,255,0.7);line-height:1.6;" data-i18n="feature.accounting.desc">自動分類支出，生成視覺化報表，清晰掌握旅行預算。</p>
       </div>
     </div>
   </div>
@@ -893,7 +887,7 @@ footer {
     <div class="section-header">
       <div class="section-subtitle">全球通行</div>
       <h2 class="section-title">支援 17+ 種貨幣</h2>
-      <p class="section-desc">無論你去邊度旅行，象寶都幫到你。</p>
+      <p class="section-desc">無論您去哪裡旅行，象寶都能幫助您。</p>
     </div>
     
     <div class="currency-grid">
@@ -922,7 +916,7 @@ footer {
     <div class="section-header">
       <div class="section-subtitle">簡單易用</div>
       <h2 class="section-title">3 步開始使用</h2>
-      <p class="section-desc">無需複雜設定，即刻開始記錄旅行開支。</p>
+      <p class="section-desc">無需複雜設定，立即開始記錄旅行開支。</p>
     </div>
     
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:clamp(24px,4vw,32px);">
@@ -1017,9 +1011,9 @@ class SpeechBubbleManager {
   constructor(bubbleElement) {
     this.bubble = bubbleElement;
     this.messages = [
-      { greeting: '你好呀！', message: '我係外遊象寶，幫你輕鬆管理旅行開支！' },
-      { greeting: '旅行開心啲！', message: '用我記賬，分帳超簡單～' },
-      { greeting: '匯率即時睇！', message: '唔使再計數計到頭痕啦！' }
+      { greeting: '您好！', message: '我是外遊象寶，幫您輕鬆管理旅行開支！' },
+      { greeting: '旅行更開心！', message: '用我記帳，分帳超簡單～' },
+      { greeting: '匯率即時看！', message: '不用再計算到頭痛啦！' }
     ];
     this.currentIndex = 0;
     this.autoRotateTimer = null;
